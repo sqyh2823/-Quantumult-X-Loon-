@@ -1,0 +1,99 @@
+# ==========================================================
+# Ray 的多节点整合优化配置 (TV 专属精简精调版 V7)
+# ==========================================================
+
+mixed-port: 7890
+allow-lan: true
+mode: rule
+log-level: info
+ipv6: false 
+
+dns:
+  enable: true
+  enhanced-mode: fake-ip 
+  fake-ip-range: 198.18.0.1/16
+  nameserver:
+    - 114.114.114.114
+    - 8.8.8.8
+  fallback:
+    - 8.8.8.8
+    - 1.1.1.1
+
+proxies:
+  # --- 节点 1: 日本 IIJ-hy2 (错峰看片主力) ---
+  - name: "🇯🇵 日本-IIJ-hy2"
+    type: hysteria2
+    server: 154.83.93.40
+    port: 2053
+    password: "qr0801"
+    sni: www.google.com
+    alpn: [h3]
+    skip-cert-verify: true
+    fast-open: true
+    up: "50 Mbps"
+    down: "800 Mbps"
+    mtu: 1200
+
+  # --- 节点 2: 美西 CF-优选 (自建域名全自动优选) ---
+  - name: "🇺🇸 美西-CF-优选"
+    type: vless
+    server: sqyh.06231104.xyz   # <--- 【已修改】成功绑定你的专属全自动优选域名
+    port: 443
+    uuid: 7404fc66-658d-4eed-9c76-f6dd6be7cacd
+    udp: true
+    tls: true
+    network: ws
+    sni: node.06231104.xyz
+    ws-opts:
+      path: "/cdn-path"
+      headers:
+        Host: node.06231104.xyz
+    up: "50 Mbps"
+    down: "900 Mbps"
+
+proxy-groups:
+  - name: "🚀 自动选择"
+    type: select
+    proxies:
+      - "🇯🇵 日本-IIJ-hy2"
+      - "🇺🇸 美西-CF-优选"
+
+  - name: "🎥 奈飞分流"
+    type: select
+    proxies:
+      - "🇯🇵 日本-IIJ-hy2"
+      - "🇺🇸 美西-CF-优选"
+
+  - name: "🏰 迪士尼分流"   # <--- 【已新增】为你电视端直刷 Disney+ 准备的专属控制组
+    type: select
+    proxies:
+      - "🇯🇵 日本-IIJ-hy2"
+      - "🇺🇸 美西-CF-优选"
+
+rules:
+  # --- 奈飞分流 ---
+  - DOMAIN-SUFFIX,netflix.com,🎥 奈飞分流
+  - DOMAIN-SUFFIX,netflix.net,🎥 奈飞分流
+  - DOMAIN-SUFFIX,nflxvideo.net,🎥 奈飞分流
+  - DOMAIN-SUFFIX,nflxext.com,🎥 奈飞分流
+  - DOMAIN-SUFFIX,nflxso.net,🎥 奈飞分流
+  - DOMAIN-SUFFIX,nflximg.net,🎥 奈飞分流
+
+  # --- 迪士尼+ 分流 (已独立并增强规则) ---
+  - DOMAIN-SUFFIX,disneyplus.com,🏰 迪士尼分流
+  - DOMAIN-SUFFIX,disney-plus.net,🏰 迪士尼分流
+  - DOMAIN-SUFFIX,disneystreaming.com,🏰 迪士尼分流
+  - DOMAIN-SUFFIX,disney.com,🏰 迪士尼分流
+  - DOMAIN-SUFFIX,dssott.com,🏰 迪士尼分流
+  - DOMAIN-SUFFIX,disneymusic.com,🏰 迪士尼分流
+
+  # --- YouTube 分流 ---
+  - DOMAIN-SUFFIX,googlevideo.com,🚀 自动选择
+  - DOMAIN-SUFFIX,youtube.com,🚀 自动选择
+  - DOMAIN-KEYWORD,youtube,🚀 自动选择
+  - DOMAIN-SUFFIX,ytimg.com,🚀 自动选择
+  
+  # --- 其它基础规则 ---
+  - DOMAIN-SUFFIX,google.com,🚀 自动选择
+  - GEOIP,CN,DIRECT
+  - MATCH,🚀 自动选择
