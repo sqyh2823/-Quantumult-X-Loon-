@@ -1,16 +1,12 @@
-# ==========================================================
-# Ray 的多节点整合优化配置 (TV 专属精简精调版 V7)
-# ==========================================================
-
 mixed-port: 7890
 allow-lan: true
 mode: rule
 log-level: info
-ipv6: false 
+ipv6: false
 
 dns:
   enable: true
-  enhanced-mode: fake-ip 
+  enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   nameserver:
     - 114.114.114.114
@@ -20,55 +16,59 @@ dns:
     - 1.1.1.1
 
 proxies:
-  # --- 节点 1: 日本 IIJ-hy2 (错峰看片主力) ---
-  - name: "🇯🇵 日本-IIJ-hy2"
+  # --- 节点 1: 美国 9929 优质线路 (VLESS REALITY) ---
+  - name: "🏠 自建 美国9929 (VLESS)"
+    type: vless
+    server: 38.244.47.207
+    port: 443
+    uuid: 3a09ea5b-6ae9-4cf1-9d56-b33b1623409d
+    network: tcp
+    tls: true
+    udp: true
+    servername: www.microsoft.com
+    client-fingerprint: chrome
+    reality-opts:
+      public-key: 9r9p18UpE-VErIqaECVKRLufjim0RCBfFVk0XUwCkSA
+      short-id: "88888888"
+
+  # --- 节点 2: RN美西直连节点 (Hysteria 2 协议) ---
+  - name: "🏠 自建 RN美西 (Hy2)"
     type: hysteria2
-    server: 154.83.93.40
-    port: 2053
-    password: "qr0801"
+    server: 23.94.122.244
+    port: 45678
+    password: "qt0801"
     sni: www.google.com
     alpn: [h3]
     skip-cert-verify: true
     fast-open: true
-    up: "50 Mbps"
-    down: "800 Mbps"
-    mtu: 1200
-
-  # --- 节点 2: 美西 CF-优选 (自建域名全自动优选) ---
-  - name: "🇺🇸 美西-CF-优选"
-    type: vless
-    server: sqyh.06231104.xyz   # <--- 【已修改】成功绑定你的专属全自动优选域名
-    port: 443
-    uuid: 7404fc66-658d-4eed-9c76-f6dd6be7cacd
-    udp: true
-    tls: true
-    network: ws
-    sni: node.06231104.xyz
-    ws-opts:
-      path: "/cdn-path"
-      headers:
-        Host: node.06231104.xyz
+    client-fingerprint: chrome
     up: "50 Mbps"
     down: "900 Mbps"
 
 proxy-groups:
+  # ⚡ 真正无感自动测速组（每10分钟测速，延迟差超过50ms才切换，防止电视看片时频繁跳节点卡顿）
   - name: "🚀 自动选择"
-    type: select
+    type: url-test
+    url: http://cp.cloudflare.com/generate_204
+    interval: 600
+    tolerance: 50
     proxies:
-      - "🇯🇵 日本-IIJ-hy2"
-      - "🇺🇸 美西-CF-优选"
+      - "🏠 自建 美国9929 (VLESS)"
+      - "🏠 自建 RN美西 (Hy2)"
 
   - name: "🎥 奈飞分流"
     type: select
     proxies:
-      - "🇯🇵 日本-IIJ-hy2"
-      - "🇺🇸 美西-CF-优选"
+      - "🚀 自动选择"
+      - "🏠 自建 美国9929 (VLESS)"
+      - "🏠 自建 RN美西 (Hy2)"
 
-  - name: "🏰 迪士尼分流"   # <--- 【已新增】为你电视端直刷 Disney+ 准备的专属控制组
+  - name: "🏰 迪士尼分流"
     type: select
     proxies:
-      - "🇯🇵 日本-IIJ-hy2"
-      - "🇺🇸 美西-CF-优选"
+      - "🚀 自动选择"
+      - "🏠 自建 美国9929 (VLESS)"
+      - "🏠 自建 RN美西 (Hy2)"
 
 rules:
   # --- 奈飞分流 ---
@@ -79,7 +79,7 @@ rules:
   - DOMAIN-SUFFIX,nflxso.net,🎥 奈飞分流
   - DOMAIN-SUFFIX,nflximg.net,🎥 奈飞分流
 
-  # --- 迪士尼+ 分流 (已独立并增强规则) ---
+  # --- 迪士尼+ 分流 ---
   - DOMAIN-SUFFIX,disneyplus.com,🏰 迪士尼分流
   - DOMAIN-SUFFIX,disney-plus.net,🏰 迪士尼分流
   - DOMAIN-SUFFIX,disneystreaming.com,🏰 迪士尼分流
