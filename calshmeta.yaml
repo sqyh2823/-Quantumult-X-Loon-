@@ -20,7 +20,7 @@ proxies:
   - name: "🏠 自建 美国9929 (VLESS)"
     type: vless
     server: 38.244.47.207
-    port: 443
+    port: 22221
     uuid: 3a09ea5b-6ae9-4cf1-9d56-b33b1623409d
     network: tcp
     tls: true
@@ -35,9 +35,9 @@ proxies:
   - name: "🏠 自建 RN美西 (Hy2)"
     type: hysteria2
     server: 23.94.122.244
-    port: 45678
+    port: 22222
     password: "qt0801"
-    sni: www.google.com
+    sni: www.microsoft.com
     alpn: [h3]
     skip-cert-verify: true
     fast-open: true
