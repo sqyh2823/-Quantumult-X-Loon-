@@ -37,7 +37,7 @@ proxies:
     server: 23.94.122.244
     port: 22222
     password: "qt0801"
-    sni: www.google.com
+    sni: www.microsoft.com
     alpn: [h3]
     skip-cert-verify: true
     fast-open: true
