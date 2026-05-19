@@ -45,8 +45,8 @@ proxies:
     up: "50 Mbps"
     down: "900 Mbps"
 
-  # --- 节点 3: 【新规追加】日本 IIJ 套 CF 优选 (VLESS WS) ---
-  - name: "jp iij日本-CF"
+  # --- 节点 3: 日本 IIJ 套 CF 优选 (VLESS WS) ---
+  - name: "🇯🇵 日本-IIJ-CF"
     type: vless
     server: sqyh.06231104.xyz
     port: 443
@@ -63,7 +63,6 @@ proxies:
     down: "900 Mbps"
 
 proxy-groups:
-  # ⚡ 自动测速组：已将新节点纳入考核，每10分钟自动全网扫描
   - name: "🚀 自动选择"
     type: url-test
     url: http://cp.cloudflare.com/generate_204
@@ -72,7 +71,7 @@ proxy-groups:
     proxies:
       - "🏠 自建 美国9929 (VLESS)"
       - "🏠 自建 RN美西 (Hy2)"
-      - "jp iij日本-CF"
+      - "🇯🇵 日本-IIJ-CF"
 
   - name: "🎥 奈飞分流"
     type: select
@@ -80,7 +79,7 @@ proxy-groups:
       - "🚀 自动选择"
       - "🏠 自建 美国9929 (VLESS)"
       - "🏠 自建 RN美西 (Hy2)"
-      - "jp iij日本-CF"
+      - "🇯🇵 日本-IIJ-CF"
 
   - name: "🏰 迪士尼分流"
     type: select
@@ -88,7 +87,7 @@ proxy-groups:
       - "🚀 自动选择"
       - "🏠 自建 美国9929 (VLESS)"
       - "🏠 自建 RN美西 (Hy2)"
-      - "jp iij日本-CF"
+      - "🇯🇵 日本-IIJ-CF"
 
 rules:
   # --- 奈飞分流 ---
@@ -111,7 +110,7 @@ rules:
   - DOMAIN-SUFFIX,googlevideo.com,🚀 自动选择
   - DOMAIN-SUFFIX,youtube.com,🚀 自动选择
   - DOMAIN-KEYWORD,youtube,🚀 自动选择
-  - DOMAIN-SUFFIX,ytimg.com,🚀 0自动选择
+  - DOMAIN-SUFFIX,ytimg.com,🚀 自动选择
   
   # --- 其它基础规则 ---
   - DOMAIN-SUFFIX,google.com,🚀 自动选择
