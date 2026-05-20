@@ -4,20 +4,11 @@ mode: rule
 log-level: info
 ipv6: false
 
-# ==================== 1. DNS 模块（无菌隔离，放行自建） ====================
+# ==================== 1. DNS 模块（无菌隔离，去嗅探轻量版） ====================
 dns:
   enable: true
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
-  
-  sniffer:
-    enable: true
-    sniff:
-      - TLS
-      - HTTP
-    force-domain:
-      - '+.netflix.com'
-      - '+.nflxvideo.net'
       
   default-nameserver:
     - 223.5.5.5
@@ -25,11 +16,11 @@ dns:
   nameserver:
     - https://dns.alicdn.com/dns-query
     
-  # 放行你的自建优选域名
+  # 严格规范化通配符，兼容所有新老 TV 端内核
   nameserver-policy:
-    '++.06231104.xyz': [223.5.5.5, 119.29.29.29]
-    '++.top': [223.5.5.5, 119.29.29.29]
-    '++.cn': [223.5.5.5, 119.29.29.29]
+    '+.06231104.xyz': [223.5.5.5, 119.29.29.29]
+    '+.top': [223.5.5.5, 119.29.29.29]
+    '+.cn': [223.5.5.5, 119.29.29.29]
     
   fallback:
     - https://dns.google/dns-query
@@ -40,7 +31,7 @@ dns:
     ipcidr:
       - 240.0.0.0/4
 
-# ==================== 2. 节点配置（彻底修复电视兼容性缺陷） ====================
+# ==================== 2. 节点配置（电视兼容性模式） ====================
 proxies:
   # --- 节点 1: 美国 9929 优质线路 (VLESS REALITY) ---
   - name: "🏠 自建 美国9929 (VLESS)"
@@ -68,11 +59,9 @@ proxies:
     client-fingerprint: chrome
     up: "40 Mbps"
     down: "150 Mbps"
-    # === 💡 脚本修正核心点 ===
     alpn: 
-      - h3          # 1. 放弃 [h3] 的连写缩写，改用标准的 yaml 列表格式，强制老内核识别
-    fast-open: false # 2. 在电视端果断关闭快开，防止电视系统底层网络栈直接扔包
-    # mtu: 1250     # 如果关闭 fast-open 好了，这一行就继续保持注释不用管
+      - h3          
+    fast-open: false # 保持关闭，确保电视底层不扔包
 
   # --- 节点 3: 日本 IIJ 套 CF 优选 (VLESS WS) ---
   - name: "🇯🇵 IIJ Japan"
@@ -106,10 +95,10 @@ proxy-groups:
   - name: "🎥 奈飞分流"
     type: select
     proxies:
+      - "🚀 自动选择"
       - "🏠 自建 美国9929 (VLESS)"   
       - "🏠 自建 RN美西 (Hy2)"       
-      - "🇯🇵 IIJ Japan"               
-      - "🚀 自动选择"
+      - "🇯🇵 IIJ Japan"               # 🛠️ 名字修正对齐
 
   - name: "🏰 迪士尼分流"
     type: select
