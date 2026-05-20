@@ -80,20 +80,22 @@ proxies:
       headers:
         Host: lyjp.06231104.xyz
 
-  # --- RN 美西 Hy2 (针对普通 163 线路电视端防丢包精调) ---
-  - name: "🏠 自建 RN美西 (Hy2)"
-    type: hysteria2
-    server: 23.94.122.244
-    port: 22222
-    password: qt0801
-    sni: www.microsoft.com
-    alpn:
-      - h3
+  # --- RN 美西 优选 ---
+  - name: "🏠 自建 RN美西-CF优选"
+    type: vless
+    server: sqyh.06231104.xyz
+    port: 443
+    uuid: 2ed31204-f8b5-45e0-86b7-d913a2eff3e8
+    udp: true
+    tls: true
+    servername: node.06231104.xyz
     client-fingerprint: chrome
     skip-cert-verify: true
-    fast-open: true   
-    up: "50 Mbps"
-    down: "900 Mbps"
+    network: ws
+    ws-opts:
+      path: /raycd
+      headers:
+        Host: node.06231104.xyz
 
 # ==================== 策略组 ====================
 proxy-groups:
@@ -108,13 +110,13 @@ proxy-groups:
     proxies:
       - "🏠 自建 绿云日本 (Hy2)"
       - "🏠 自建 绿云日本-CF优选"
-      - "🏠 自建 RN美西 (Hy2)"
+      - "🏠 自建 RN美西-CF优选"
 
   - name: "🎥 奈飞分流"
     type: select
     proxies:
       - "🚀 自动选择"
-      - "🏠 自建 RN美西 (Hy2)"
+      - "🏠 自建 RN美西-CF优选"
       - "🏠 自建 绿云日本-CF优选"
       - "🏠 自建 绿云日本 (Hy2)"
 
@@ -123,7 +125,7 @@ proxy-groups:
     proxies:
       - "🚀 自动选择"
       - "🏠 自建 绿云日本-CF优选"
-      - "🏠 自建 RN美西 (Hy2)"
+      - "🏠 自建 RN美西-CF优选"
       - "🏠 自建 绿云日本 (Hy2)"
 
 # ==================== 规则 ====================
