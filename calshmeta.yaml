@@ -72,6 +72,7 @@ proxies:
     # === 已调整：下调 Brutal 拥塞发包率，150M 既满足大带宽，又防止把电视网卡喂吐 ===
     up: "40 Mbps"
     down: "150 Mbps"
+    mtu: 1250
 
   # --- 节点 3: 日本 IIJ 套 CF 优选 (VLESS WS) ---
   - name: "🇯🇵 IIJ Japan"
