@@ -69,7 +69,6 @@ proxies:
     servername: lyjp.06231104.xyz
     client-fingerprint: chrome
     skip-cert-verify: true
-
     network: ws
     ws-opts:
       path: /raycf
@@ -101,12 +100,10 @@ proxy-groups:
     tolerance: 100
     lazy: true
     timeout: 3000
-
     proxies:
       - "🏠 自建 绿云日本 (Hy2)"
       - "🏠 自建 绿云日本-CF优选"
       - "🏠 自建 RN美西 (Hy2)"
-      - "🇯🇵 IIJ Japan"
 
   - name: "🎥 奈飞分流"
     type: select
@@ -115,7 +112,6 @@ proxy-groups:
       - "🏠 自建 RN美西 (Hy2)"
       - "🏠 自建 绿云日本-CF优选"
       - "🏠 自建 绿云日本 (Hy2)"
-      - "🇯🇵 IIJ Japan"
 
   - name: "🏰 迪士尼分流"
     type: select
@@ -124,7 +120,6 @@ proxy-groups:
       - "🏠 自建 绿云日本-CF优选"
       - "🏠 自建 RN美西 (Hy2)"
       - "🏠 自建 绿云日本 (Hy2)"
-      - "🇯🇵 IIJ Japan"
 
 # ==================== 规则 ====================
 rules:
