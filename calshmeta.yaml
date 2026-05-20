@@ -4,91 +4,107 @@ mode: rule
 log-level: info
 ipv6: false
 
-# ==================== 1. DNS 模块（无菌隔离，去嗅探轻量版） ====================
+# ==================== DNS ====================
 dns:
   enable: true
+  ipv6: false
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
-      
+  respect-rules: true
+
   default-nameserver:
     - 223.5.5.5
     - 119.29.29.29
+
   nameserver:
     - https://dns.alicdn.com/dns-query
-    
-  # 严格规范化通配符，兼容所有新老 TV 端内核
+
   nameserver-policy:
-    '+.06231104.xyz': [223.5.5.5, 119.29.29.29]
-    '+.top': [223.5.5.5, 119.29.29.29]
-    '+.cn': [223.5.5.5, 119.29.29.29]
-    
+    '+.06231104.xyz':
+      - 223.5.5.5
+      - 119.29.29.29
+    '+.top':
+      - 223.5.5.5
+      - 119.29.29.29
+    '+.cn':
+      - 223.5.5.5
+      - 119.29.29.29
+
   fallback:
-    - https://dns.google/dns-query
     - https://1.1.1.1/dns-query
+    - https://dns.google/dns-query
+
   fallback-filter:
     geoip: true
     geoip-code: CN
     ipcidr:
       - 240.0.0.0/4
 
-# ==================== 2. 节点配置（电视兼容性模式） ====================
+# ==================== 节点 ====================
 proxies:
-  # --- 节点 1: 美国 9929 优质线路 (VLESS REALITY) ---
-  - name: "🏠 自建 美国9929 (VLESS)"
-    type: vless
-    server: 38.244.47.207
-    port: 22221
-    uuid: 3a09ea5b-6ae9-4cf1-9d56-b33b1623409d
-    network: tcp
-    tls: true
-    udp: true
-    servername: www.microsoft.com
-    client-fingerprint: chrome
-    reality-opts:
-      public-key: 9r9p18UpE-VErIqaECVKRLufjim0RCBfFVk0XUwCkSA
-      short-id: "88888888"
 
-  # --- 节点 2: RN美西直连节点 (Hysteria 2 协议) ---
+  # --- 日本直连 Hy2 ---
+  - name: "🏠 自建 绿云日本 (Hy2)"
+    type: hysteria2
+    server: 109.107.140.122
+    port: 22223
+    password: qr0801
+    sni: www.microsoft.com
+    alpn:
+      - h3
+    client-fingerprint: chrome
+    skip-cert-verify: true
+    fast-open: true
+    up: "50 Mbps"
+    down: "900 Mbps"
+
+  # --- 日本 CF 优选 ---
+  - name: "🏠 自建 绿云日本-CF优选"
+    type: vless
+    server: sqyh.06231104.xyz
+    port: 443
+    uuid: 707e268b-c01e-4b9a-bfef-36bcfab127f0
+    udp: true
+    tls: true
+    servername: lyjp.06231104.xyz
+    client-fingerprint: chrome
+    skip-cert-verify: true
+
+    network: ws
+    ws-opts:
+      path: /raycf
+      headers:
+        Host: lyjp.06231104.xyz
+
+  # --- RN 美西 Hy2 ---
   - name: "🏠 自建 RN美西 (Hy2)"
     type: hysteria2
     server: 23.94.122.244
     port: 22222
-    password: "qt0801"
+    password: qt0801
     sni: www.microsoft.com
-    skip-cert-verify: true
+    alpn:
+      - h3
     client-fingerprint: chrome
-    up: "40 Mbps"
-    down: "150 Mbps"
-    alpn: 
-      - h3          
-    fast-open: false # 保持关闭，确保电视底层不扔包
-
-  # --- 节点 3: 日本 IIJ 套 CF 优选 (VLESS WS) ---
-  - name: "🇯🇵 IIJ Japan"
-    type: vless
-    server: sqyh.06231104.xyz
-    port: 443
-    uuid: b6e606be-0c29-4b9a-be98-12869749935b
-    udp: true
-    tls: true
-    network: ws
-    sni: node.06231104.xyz
-    ws-opts:
-      path: "/raycdn"
-      headers:
-        Host: node.06231104.xyz
+    skip-cert-verify: true
+    fast-open: true
     up: "50 Mbps"
     down: "900 Mbps"
 
-# ==================== 3. 策略组 ====================
+# ==================== 策略组 ====================
 proxy-groups:
+
   - name: "🚀 自动选择"
     type: url-test
-    url: http://cp.cloudflare.com/generate_204
+    url: https://cp.cloudflare.com/generate_204
     interval: 600
-    tolerance: 50
+    tolerance: 100
+    lazy: true
+    timeout: 3000
+
     proxies:
-      - "🏠 自建 美国9929 (VLESS)"
+      - "🏠 自建 绿云日本 (Hy2)"
+      - "🏠 自建 绿云日本-CF优选"
       - "🏠 自建 RN美西 (Hy2)"
       - "🇯🇵 IIJ Japan"
 
@@ -96,20 +112,24 @@ proxy-groups:
     type: select
     proxies:
       - "🚀 自动选择"
-      - "🏠 自建 美国9929 (VLESS)"   
-      - "🏠 自建 RN美西 (Hy2)"       
-      - "🇯🇵 IIJ Japan"               # 🛠️ 名字修正对齐
+      - "🏠 自建 RN美西 (Hy2)"
+      - "🏠 自建 绿云日本-CF优选"
+      - "🏠 自建 绿云日本 (Hy2)"
+      - "🇯🇵 IIJ Japan"
 
   - name: "🏰 迪士尼分流"
     type: select
     proxies:
       - "🚀 自动选择"
-      - "🏠 自建 美国9929 (VLESS)"
+      - "🏠 自建 绿云日本-CF优选"
       - "🏠 自建 RN美西 (Hy2)"
+      - "🏠 自建 绿云日本 (Hy2)"
       - "🇯🇵 IIJ Japan"
 
-# ==================== 4. 规则精细化 ====================
+# ==================== 规则 ====================
 rules:
+
+  # Netflix
   - DOMAIN-KEYWORD,netflix,🎥 奈飞分流
   - DOMAIN-SUFFIX,netflix.com,🎥 奈飞分流
   - DOMAIN-SUFFIX,netflix.net,🎥 奈飞分流
@@ -117,20 +137,25 @@ rules:
   - DOMAIN-SUFFIX,nflxso.net,🎥 奈飞分流
   - DOMAIN-SUFFIX,nflximg.net,🎥 奈飞分流
   - DOMAIN-SUFFIX,nflxvideo.net,🎥 奈飞分流
-  - GEOIP,netflix,🎥 奈飞分流
 
+  # Disney+
   - DOMAIN-SUFFIX,disneyplus.com,🏰 迪士尼分流
   - DOMAIN-SUFFIX,disney-plus.net,🏰 迪士尼分流
   - DOMAIN-SUFFIX,disneystreaming.com,🏰 迪士尼分流
-  - DOMAIN-SUFFIX,disney.com,🏰 迪士尼分流
   - DOMAIN-SUFFIX,dssott.com,🏰 迪士尼分流
-  - DOMAIN-SUFFIX,disneymusic.com,🏰 迪士尼分流
 
+  # YouTube
   - DOMAIN-SUFFIX,googlevideo.com,🚀 自动选择
   - DOMAIN-SUFFIX,youtube.com,🚀 自动选择
-  - DOMAIN-KEYWORD,youtube,🚀 自动选择
   - DOMAIN-SUFFIX,ytimg.com,🚀 自动选择
-  
-  - DOMAIN-SUFFIX,google.com,🚀 自动选择
+
+  # AI
+  - DOMAIN-SUFFIX,openai.com,🚀 自动选择
+  - DOMAIN-SUFFIX,chatgpt.com,🚀 自动选择
+  - DOMAIN-SUFFIX,anthropic.com,🚀 自动选择
+
+  # 国内直连
   - GEOIP,CN,DIRECT
+
+  # 默认
   - MATCH,🚀 自动选择
