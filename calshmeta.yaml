@@ -19,6 +19,11 @@ dns:
   nameserver:
     - https://dns.alicdn.com/dns-query
 
+  # 🛠️ 针对电视端报错的核心修复点：当 respect-rules 开启时，此项绝对不能为空
+  proxy-server-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+
   nameserver-policy:
     '+.06231104.xyz':
       - 223.5.5.5
@@ -75,7 +80,7 @@ proxies:
       headers:
         Host: lyjp.06231104.xyz
 
-  # --- RN 美西 Hy2 ---
+  # --- RN 美西 Hy2 (针对普通 163 线路电视端防丢包精调) ---
   - name: "🏠 自建 RN美西 (Hy2)"
     type: hysteria2
     server: 23.94.122.244
@@ -86,7 +91,8 @@ proxies:
       - h3
     client-fingerprint: chrome
     skip-cert-verify: true
-    fast-open: true
+    fast-open: false  # 普通回程线路在电视端关闭快开，防止高丢包率下网卡假死
+    # mtu: 1200       # 如果依然有延迟无网络，把前面的 # 号去掉，强制缩减 UDP 包大小滑过 QoS
     up: "50 Mbps"
     down: "900 Mbps"
 
