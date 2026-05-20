@@ -91,8 +91,7 @@ proxies:
       - h3
     client-fingerprint: chrome
     skip-cert-verify: true
-    fast-open: false  # 普通回程线路在电视端关闭快开，防止高丢包率下网卡假死
-    # mtu: 1200       # 如果依然有延迟无网络，把前面的 # 号去掉，强制缩减 UDP 包大小滑过 QoS
+    fast-open: true   
     up: "50 Mbps"
     down: "900 Mbps"
 
