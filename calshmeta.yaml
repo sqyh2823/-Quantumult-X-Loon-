@@ -4,13 +4,13 @@ mode: rule
 log-level: info
 ipv6: false
 
-# ==================== 1. DNS 模块深度重组（彻底解决 25%） ====================
+# ==================== 1. DNS 模块（彻底隔离，同时放行自建域名） ====================
 dns:
   enable: true
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   
-  # 嗅探机制：强行剥离电视 App 的伪装，精准抓取奈飞的真实底层请求
+  # 嗅探机制：强行抓取奈飞等流媒体的真实底层加密请求
   sniffer:
     enable: true
     sniff:
@@ -25,8 +25,15 @@ dns:
     - 119.29.29.29
   nameserver:
     - https://dns.alicdn.com/dns-query # 仅用于国内基础域名秒级解析
+    
+  # === 💡 核心修复：精准特赦令！放行你的自建优选域名，日本节点瞬间复活 ===
+  nameserver-policy:
+    '++.06231104.xyz': [223.5.5.5, 119.29.29.29] # 日本 CF 优选域名走国内直解
+    '++.top': [223.5.5.5, 119.29.29.29]          # 你的其它 top 自建域名
+    '++.cn': [223.5.5.5, 119.29.29.29]           # 放行 cn 域名加速
+    
   fallback:
-    - https://dns.google/dns-query     # 强制国外流媒体域名走无污染的加密加密通道
+    - https://dns.google/dns-query     # 强制国外流媒体走加密通道，杜绝污染
     - https://1.1.1.1/dns-query
   fallback-filter:
     geoip: true
@@ -62,7 +69,7 @@ proxies:
     skip-cert-verify: true
     fast-open: true
     client-fingerprint: chrome
-    # === 已调整：满足百兆宽带大吞吐，同时绝不撑爆电视缓冲队列 ===
+    # === 已调整：下调 Brutal 拥塞发包率，150M 既满足大带宽，又防止把电视网卡喂吐 ===
     up: "40 Mbps"
     down: "150 Mbps"
 
@@ -83,7 +90,7 @@ proxies:
     up: "50 Mbps"
     down: "900 Mbps"
 
-# ==================== 3. 策略组（推荐手动指定直连测试） ====================
+# ==================== 3. 策略组 ====================
 proxy-groups:
   - name: "🚀 自动选择"
     type: url-test
@@ -91,16 +98,16 @@ proxy-groups:
     interval: 600
     tolerance: 50
     proxies:
-      - "🏠 自建 美国9929 (VLESS)"
+      - "🏠 自建 美国 9929 (VLESS)"
       - "🏠 自建 RN美西 (Hy2)"
       - "🇯🇵 IIJ Japan"
 
   - name: "🎥 奈飞分流"
     type: select
     proxies:
-      - "🏠 自建 美国9929 (VLESS)"   # 测试自建直连时，在电视上强行手动勾选这一个
+      - "🏠 自建 美国9929 (VLESS)"   # 排查自建节点时，请在电视上强行手动勾选这一个
       - "🏠 自建 RN美西 (Hy2)"       # 或者勾选这一个
-      - "🇯🇵 IIJ Japan"               # 如果全翻车了，用它兜底
+      - "🇯🇵 IIJ Japan"               # 日本 CF 兜底线
       - "🚀 自动选择"
 
   - name: "🏰 迪士尼分流"
@@ -113,7 +120,7 @@ proxy-groups:
 
 # ==================== 4. 规则精细化（双防线，封杀 25% 和 90%） ====================
 rules:
-  # 第一道防线：利用底层关键字和后缀，强制收拢奈飞全家桶流量，防止电视 App 走后门
+  # 第一道防线：域名和关键字拦截，强制收拢奈飞全家桶
   - DOMAIN-KEYWORD,netflix,🎥 奈飞分流
   - DOMAIN-SUFFIX,netflix.com,🎥 奈飞分流
   - DOMAIN-SUFFIX,netflix.net,🎥 奈飞分流
@@ -122,7 +129,7 @@ rules:
   - DOMAIN-SUFFIX,nflximg.net,🎥 奈飞分流
   - DOMAIN-SUFFIX,nflxvideo.net,🎥 奈飞分流
 
-  # 第二道防线：针对卡 90% 的绝杀。当电视通过 IP 直接拉取奈飞视频切片时，强制拦截并送入代理
+  # 第二道防线：绝杀 90% 断流。只要目标 IP 属于奈飞的官方大 IP 段，一律强行代理
   - GEOIP,netflix,🎥 奈飞分流
 
   # --- 迪士尼+ 分流 ---
