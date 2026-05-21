@@ -66,7 +66,7 @@ proxies:
   # --- 日本 CF 优选 ---
   - name: "🏠 自建 绿云日本-CF优选"
     type: vless
-    server: sqyh.06231104.xyz
+    server: qjy.06231104.xyz
     port: 443
     uuid: 707e268b-c01e-4b9a-bfef-36bcfab127f0
     udp: true
