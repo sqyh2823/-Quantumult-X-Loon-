@@ -63,23 +63,6 @@ proxies:
     up: "50 Mbps"
     down: "900 Mbps"
 
-  # --- 日本 CF 优选 ---
-  - name: "🏠 自建 绿云日本-CF优选"
-    type: vless
-    server: qjy.06231104.xyz
-    port: 443
-    uuid: 707e268b-c01e-4b9a-bfef-36bcfab127f0
-    udp: true
-    tls: true
-    servername: lyjp.06231104.xyz
-    client-fingerprint: chrome
-    skip-cert-verify: true
-    network: ws
-    ws-opts:
-      path: /raycf
-      headers:
-        Host: lyjp.06231104.xyz
-
   # --- RN 美西 优选 ---
   - name: "🏠 自建 RN美西-CF优选"
     type: vless
@@ -109,7 +92,6 @@ proxy-groups:
     timeout: 3000
     proxies:
       - "🏠 自建 绿云日本 (Hy2)"
-      - "🏠 自建 绿云日本-CF优选"
       - "🏠 自建 RN美西-CF优选"
 
   - name: "🎥 奈飞分流"
@@ -117,14 +99,12 @@ proxy-groups:
     proxies:
       - "🚀 自动选择"
       - "🏠 自建 RN美西-CF优选"
-      - "🏠 自建 绿云日本-CF优选"
       - "🏠 自建 绿云日本 (Hy2)"
 
   - name: "🏰 迪士尼分流"
     type: select
     proxies:
       - "🚀 自动选择"
-      - "🏠 自建 绿云日本-CF优选"
       - "🏠 自建 RN美西-CF优选"
       - "🏠 自建 绿云日本 (Hy2)"
 
