@@ -61,7 +61,7 @@ proxies:
     skip-cert-verify: true
     fast-open: true
     up: "50 Mbps"
-    down: "900 Mbps"
+    down: "800 Mbps"
 
   # --- RN 美西 优选 ---
   - name: "🏠 自建 RN美西-CF优选"
@@ -80,6 +80,23 @@ proxies:
       headers:
         Host: node.06231104.xyz
 
+  # --- 绿云日本 优选 ---
+  - name: "🏠 自建 绿云日本-CF优选"
+    type: vless
+    server: sqyh.06231104.xyz
+    port: 443
+    uuid: f8c1ef23-f1b0-4aa6-a491-13f1af76c72e
+    udp: true
+    tls: true
+    servername: lyrcf.06231104.xyz
+    client-fingerprint: chrome
+    skip-cert-verify: true
+    network: ws
+    ws-opts:
+      path: /raycc
+      headers:
+        Host: lyrcf.06231104.xyz
+
 # ==================== 策略组 ====================
 proxy-groups:
 
@@ -93,6 +110,7 @@ proxy-groups:
     proxies:
       - "🏠 自建 绿云日本 (Hy2)"
       - "🏠 自建 RN美西-CF优选"
+      - "🏠 自建 绿云日本-CF优选"
 
   - name: "🎥 奈飞分流"
     type: select
@@ -100,6 +118,7 @@ proxy-groups:
       - "🚀 自动选择"
       - "🏠 自建 RN美西-CF优选"
       - "🏠 自建 绿云日本 (Hy2)"
+      - "🏠 自建 绿云日本-CF优选"
 
   - name: "🏰 迪士尼分流"
     type: select
@@ -107,6 +126,7 @@ proxy-groups:
       - "🚀 自动选择"
       - "🏠 自建 RN美西-CF优选"
       - "🏠 自建 绿云日本 (Hy2)"
+      - "🏠 自建 绿云日本-CF优选"
 
 # ==================== 规则 ====================
 rules:
