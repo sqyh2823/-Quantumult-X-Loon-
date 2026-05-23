@@ -51,10 +51,10 @@ proxies:
   # --- 日本直连 Hy2 ---
   - name: "🏠 自建 绿云日本 (Hy2)"
     type: hysteria2
-    server: 109.107.140.122
+    server: 2403:71c0:2000:13f2::a
     port: 22223
     password: qr0801
-    sni: www.microsoft.com
+    sni: www.apple.com
     alpn:
       - h3
     client-fingerprint: chrome
