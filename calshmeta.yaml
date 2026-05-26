@@ -2,12 +2,12 @@ mixed-port: 7890
 allow-lan: true
 mode: rule
 log-level: info
-ipv6: false
+ipv6: true # 🛠️ 核心修改：开启全局 IPv6 支持，允许内核向 IPv6 节点发起连接
 
 # ==================== DNS ====================
 dns:
   enable: true
-  ipv6: false
+  ipv6: false # 🔒 严谨保留：防止电视端 App 获取 AAAA 记录导致分流错乱或卡顿
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   respect-rules: true
@@ -23,6 +23,14 @@ dns:
   proxy-server-nameserver:
     - 223.5.5.5
     - 119.29.29.29
+
+  # 🔒 核心修复：防止国内主流 App 因 Fake-IP 导致判定为 VPN 代理而报错
+  fake-ip-filter:
+    - "geoip:cn"
+    - "geosite:cn"
+    - "+.qq.com"
+    - "+.qqlive.com"
+    - "+.video.qq.com"
 
   nameserver-policy:
     '+.06231104.xyz':
@@ -48,20 +56,20 @@ dns:
 # ==================== 节点 ====================
 proxies:
 
-  # --- 日本直连 Hy2 ---
+  # --- 日本直连 Hy2 (IPv6) ---
   - name: "🏠 自建 绿云日本 (Hy2)"
     type: hysteria2
-    server: 2403:71c0:2000:13f2::a
+    server: "2403:71c0:2000:13f2::a" # 🛠️ 核心修改：已更新为您的最新 IPv6 地址
     port: 22223
     password: qr0801
-    sni: www.apple.com
+    sni: www.microsoft.com
     alpn:
       - h3
     client-fingerprint: chrome
     skip-cert-verify: true
-    fast-open: true
+    fast-open: false # 保持关闭以确保电视端内核兼容性
     up: "50 Mbps"
-    down: "800 Mbps"
+    down: "900 Mbps"
 
   # --- RN 美西 优选 ---
   - name: "🏠 自建 RN美西-CF优选"
@@ -80,23 +88,6 @@ proxies:
       headers:
         Host: node.06231104.xyz
 
-  # --- 绿云日本 优选 ---
-  - name: "🏠 自建 绿云日本-CF优选"
-    type: vless
-    server: sqyh.06231104.xyz
-    port: 443
-    uuid: f8c1ef23-f1b0-4aa6-a491-13f1af76c72e
-    udp: true
-    tls: true
-    servername: lyrcf.06231104.xyz
-    client-fingerprint: chrome
-    skip-cert-verify: true
-    network: ws
-    ws-opts:
-      path: /raycc
-      headers:
-        Host: lyrcf.06231104.xyz
-
 # ==================== 策略组 ====================
 proxy-groups:
 
@@ -110,7 +101,6 @@ proxy-groups:
     proxies:
       - "🏠 自建 绿云日本 (Hy2)"
       - "🏠 自建 RN美西-CF优选"
-      - "🏠 自建 绿云日本-CF优选"
 
   - name: "🎥 奈飞分流"
     type: select
@@ -118,7 +108,6 @@ proxy-groups:
       - "🚀 自动选择"
       - "🏠 自建 RN美西-CF优选"
       - "🏠 自建 绿云日本 (Hy2)"
-      - "🏠 自建 绿云日本-CF优选"
 
   - name: "🏰 迪士尼分流"
     type: select
@@ -126,10 +115,14 @@ proxy-groups:
       - "🚀 自动选择"
       - "🏠 自建 RN美西-CF优选"
       - "🏠 自建 绿云日本 (Hy2)"
-      - "🏠 自建 绿云日本-CF优选"
 
 # ==================== 规则 ====================
 rules:
+
+  # 📺 国内电视 App 强直连（置顶防止被 Fake-IP 误伤）
+  - DOMAIN-SUFFIX,qq.com,DIRECT
+  - DOMAIN-SUFFIX,qqlive.com,DIRECT
+  - DOMAIN-SUFFIX,video.qq.com,DIRECT
 
   # Netflix
   - DOMAIN-KEYWORD,netflix,🎥 奈飞分流
