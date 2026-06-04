@@ -2,12 +2,12 @@ mixed-port: 7890
 allow-lan: true
 mode: rule
 log-level: info
-ipv6: true # 保持开启全局 IPv6 支持
+ipv6: false # 🛠️ 核心修正：改回 false，防止电视端或 VPS 偷跑 IPv6 流量绕过万国 DNS 的 IPv4 解锁
 
 # ==================== DNS ====================
 dns:
   enable: true
-  ipv6: false # 🔒 严谨保留：防止电视端 App 获取 AAAA 记录导致分流错乱或卡顿
+  ipv6: false # 🔒 严谨保留：严禁电视端获取 AAAA 记录
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   respect-rules: true
@@ -78,7 +78,7 @@ proxies:
       - h3
     client-fingerprint: chrome
     skip-cert-verify: true
-    fast-open: false # 保持关闭以避免电视端内核不兼容引发的 Timeout
+    fast-open: false 
     up: "50 Mbps"
     down: "800 Mbps"
 
@@ -89,13 +89,14 @@ proxies:
     port: 22222
     uuid: 59dde1dd-c89d-4cfc-997f-28133d25deb0
     network: tcp
-    fast-open: false # 顺应 TV 端内核兼容性，关闭快开防 Timeout
+    fast-open: false 
     udp: true
     tls: true
     flow: xtls-rprx-vision
     servername: www.bing.com
     client-fingerprint: chrome
     packet-encoding: xudp
+    ip-version: ipv4-only # 🛠️ 核心修正：强制该节点的目标连接仅走 IPv4，全量逼出万国 DNS 的解锁威力
     reality-opts:
       public-key: SVUpfWk5zDd1iND0m3koWijR2D7Y-I6amzv8oMtbmhU
       short-id: "88888888"
@@ -166,7 +167,7 @@ proxy-groups:
       - "🚀 自动选择"
       - "🇺🇸 自建 美西9929-VLESS"
       - "🏠 自建 绿云SB- Hy2"
-      - "🏠 自建 绿云日本-CF优选 (VLESS)" # 🛠️ 核心修复：已修正“绿云”字眼拼写，确保名称严格一致
+      - "🏠 自建 绿云日本-CF优选 (VLESS)" 
       - "🏠 自建 RN美西-CF优选"
 
   - name: "🔴 YouTube分流"
