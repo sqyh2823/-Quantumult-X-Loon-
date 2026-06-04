@@ -89,7 +89,7 @@ proxies:
     port: 22222
     uuid: 59dde1dd-c89d-4cfc-997f-28133d25deb0
     network: tcp
-    fast-open: false # 🛠️ 严谨调整：顺应 TV 端内核兼容性，关闭快开防 Timeout
+    fast-open: false # 顺应 TV 端内核兼容性，关闭快开防 Timeout
     udp: true
     tls: true
     flow: xtls-rprx-vision
@@ -166,7 +166,7 @@ proxy-groups:
       - "🚀 自动选择"
       - "🇺🇸 自建 美西9929-VLESS"
       - "🏠 自建 绿云SB- Hy2"
-      - "🏠 自建 绿云日本-CF优选 (VLESS)"
+      - "🏠 自建 绿云日本-CF优选 (VLESS)" # 🛠️ 核心修复：已修正“绿云”字眼拼写，确保名称严格一致
       - "🏠 自建 RN美西-CF优选"
 
   - name: "🔴 YouTube分流"
