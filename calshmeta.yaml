@@ -82,6 +82,24 @@ proxies:
     up: "50 Mbps"
     down: "800 Mbps"
 
+  # --- 美西 9929 精英线 ---
+  - name: "🇺🇸 自建 美西9929-VLESS"
+    type: vless
+    server: 38.47.113.6
+    port: 22222
+    uuid: 59dde1dd-c89d-4cfc-997f-28133d25deb0
+    network: tcp
+    fast-open: false # 🛠️ 严谨调整：顺应 TV 端内核兼容性，关闭快开防 Timeout
+    udp: true
+    tls: true
+    flow: xtls-rprx-vision
+    servername: www.bing.com
+    client-fingerprint: chrome
+    packet-encoding: xudp
+    reality-opts:
+      public-key: SVUpfWk5zDd1iND0m3koWijR2D7Y-I6amzv8oMtbmhU
+      short-id: "88888888"
+
   # --- 绿云日本-CF优选模式 ---
   - name: "🏠 自建 绿云日本-CF优选 (VLESS)"
     type: vless
@@ -94,7 +112,7 @@ proxies:
     client-fingerprint: chrome
     skip-cert-verify: true
     network: ws
-    packet-encoding: xudp # 针对电视端流媒体优化的 UDP 包装
+    packet-encoding: xudp 
     ws-opts:
       path: /raycc
       headers:
@@ -129,6 +147,7 @@ proxy-groups:
     timeout: 3000
     proxies:
       - "🏠 自建 绿云SB- Hy2"
+      - "🇺🇸 自建 美西9929-VLESS"
       - "🏠 自建 绿云日本-CF优选 (VLESS)"
       - "🏠 自建 RN美西-CF优选"
 
@@ -136,6 +155,7 @@ proxy-groups:
     type: select
     proxies:
       - "🚀 自动选择"
+      - "🇺🇸 自建 美西9929-VLESS"
       - "🏠 自建 绿云SB- Hy2"
       - "🏠 自建 绿云日本-CF优选 (VLESS)"
       - "🏠 自建 RN美西-CF优选"
@@ -144,14 +164,16 @@ proxy-groups:
     type: select
     proxies:
       - "🚀 自动选择"
+      - "🇺🇸 自建 美西9929-VLESS"
       - "🏠 自建 绿云SB- Hy2"
-      - "🏠 自建 绿云日本-CF优选 (VLESS)"
+      - "🏠 自建 录云日本-CF优选 (VLESS)"
       - "🏠 自建 RN美西-CF优选"
 
   - name: "🔴 YouTube分流"
     type: select
     proxies:
       - "🚀 自动选择"
+      - "🇺🇸 自建 美西9929-VLESS"
       - "🏠 自建 绿云SB- Hy2"
       - "🏠 自建 绿云日本-CF优选 (VLESS)"
       - "🏠 自建 RN美西-CF优选"
