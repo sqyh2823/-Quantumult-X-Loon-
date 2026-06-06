@@ -2,21 +2,28 @@ mixed-port: 7890
 allow-lan: true
 mode: rule
 log-level: info
-ipv6: false # 🛠️ 核心修正：改回 false，防止电视端或 VPS 偷跑 IPv6 流量绕过万国 DNS 的 IPv4 解锁
+ipv6: false # Clash 层面关闭 IPv6 处理，配合路由器关闭 IPv6 效果达到完全体
 
 # ==================== DNS ====================
 dns:
   enable: true
-  ipv6: false # 🔒 严谨保留：严禁电视端获取 AAAA 记录
+  ipv6: false # 🔒 严格禁止 DNS 层面解析 AAAA (IPv6) 记录
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
+  listen: 0.0.0.0:1053 # 显式监听本地 DNS 端口
   respect-rules: true
+
+  # 🚀 关键劫持项：强制劫持电视发往任何 IP（如 Google 8.8.8.8）的 53 端口 DNS 请求
+  dns-hijack:
+    - 'any:53'
+    - 'tcp://any:53'
 
   default-nameserver:
     - 223.5.5.5
     - 119.29.29.29
 
   nameserver:
+    - https://doh.pub/dns-query
     - https://dns.alicdn.com/dns-query
 
   # 🛠️ 针对电视端报错的核心修复点：当 respect-rules 开启时，此项绝对不能为空
@@ -68,7 +75,7 @@ dns:
 proxies:
 
   # --- 绿云SB-hy2节点 ---
-  - name: "🏠 自建 绿云SB- Hy2"
+  - name: "绿云SB- Hy2"
     type: hysteria2
     server: 45.143.131.45
     port: 22228
@@ -83,7 +90,7 @@ proxies:
     down: "800 Mbps"
 
   # --- 美西 9929 精英线 ---
-  - name: "🇺🇸 自建 美西9929-VLESS"
+  - name: "美西9929-VLESS"
     type: vless
     server: 38.47.113.6
     port: 22222
@@ -96,13 +103,13 @@ proxies:
     servername: www.bing.com
     client-fingerprint: chrome
     packet-encoding: xudp
-    ip-version: ipv4-only # 🛠️ 核心修正：强制该节点的目标连接仅走 IPv4，全量逼出万国 DNS 的解锁威力
+    ip-version: ipv4-only # 🔒 强制目标连接走纯 IPv4，全量释放万国 DNS 解锁威力
     reality-opts:
       public-key: SVUpfWk5zDd1iND0m3koWijR2D7Y-I6amzv8oMtbmhU
       short-id: "88888888"
 
   # --- 绿云日本-CF优选模式 ---
-  - name: "🏠 自建 绿云日本-CF优选 (VLESS)"
+  - name: "绿云日本-CF优选 (VLESS)"
     type: vless
     server: sqyh.06231104.xyz
     port: 443
@@ -120,7 +127,7 @@ proxies:
         Host: lyrcf.06231104.xyz
 
   # --- RN 美西 优选 ---
-  - name: "🏠 自建 RN美西-CF优选"
+  - name: "RN美西-CF优选"
     type: vless
     server: sqyh.06231104.xyz
     port: 443
@@ -140,44 +147,39 @@ proxies:
 proxy-groups:
 
   - name: "🚀 自动选择"
-    type: url-test
-    url: https://cp.cloudflare.com/generate_204
-    interval: 600
-    tolerance: 100
-    lazy: true
-    timeout: 3000
+    type: select # 🛠️ 核心修改：已切换为纯手动选择模式，去除了 url-test 的相关参数
     proxies:
-      - "🏠 自建 绿云SB- Hy2"
-      - "🇺🇸 自建 美西9929-VLESS"
-      - "🏠 自建 绿云日本-CF优选 (VLESS)"
-      - "🏠 自建 RN美西-CF优选"
+      - "绿云SB- Hy2"
+      - "美西9929-VLESS"
+      - "绿云日本-CF优选 (VLESS)"
+      - "RN美西-CF优选"
 
   - name: "🎥 奈飞分流"
     type: select
     proxies:
       - "🚀 自动选择"
-      - "🇺🇸 自建 美西9929-VLESS"
-      - "🏠 自建 绿云SB- Hy2"
-      - "🏠 自建 绿云日本-CF优选 (VLESS)"
-      - "🏠 自建 RN美西-CF优选"
+      - "美西9929-VLESS"
+      - "绿云SB- Hy2"
+      - "绿云日本-CF优选 (VLESS)"
+      - "RN美西-CF优选"
 
   - name: "🏰 迪士尼分流"
     type: select
     proxies:
       - "🚀 自动选择"
-      - "🇺🇸 自建 美西9929-VLESS"
-      - "🏠 自建 绿云SB- Hy2"
-      - "🏠 自建 绿云日本-CF优选 (VLESS)" 
-      - "🏠 自建 RN美西-CF优选"
+      - "美西9929-VLESS"
+      - "绿云SB- Hy2"
+      - "绿云日本-CF优选 (VLESS)"
+      - "RN美西-CF优选"
 
   - name: "🔴 YouTube分流"
     type: select
     proxies:
       - "🚀 自动选择"
-      - "🇺🇸 自建 美西9929-VLESS"
-      - "🏠 自建 绿云SB- Hy2"
-      - "🏠 自建 绿云日本-CF优选 (VLESS)"
-      - "🏠 自建 RN美西-CF优选"
+      - "美西9929-VLESS"
+      - "绿云SB- Hy2"
+      - "绿云日本-CF优选 (VLESS)"
+      - "RN美西-CF优选"
 
 # ==================== 规则 ====================
 rules:
