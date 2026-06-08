@@ -13,7 +13,7 @@ dns:
   listen: 0.0.0.0:1053 # 显式监听本地 DNS 端口
   respect-rules: true
 
-  # 🚀 关键劫持项：强制劫持电视发往任何 IP（如 Google 8.8.8.8）的 53 端口 DNS 请求
+  # 🚀 拦截传统 DNS 偷跑
   dns-hijack:
     - 'any:53'
     - 'tcp://any:53'
@@ -31,24 +31,10 @@ dns:
     - 223.5.5.5
     - 119.29.29.29
 
-  # 🔒 核心修复：防止国内主流电视 App 因 Fake-IP 虚拟 IP 污染导致判定为 VPN 代理而报错/卡顿
+  # 🔒 仅保留大方向的中国大陆 IP/域名不走 Fake-IP
   fake-ip-filter:
     - "geoip:cn"
     - "geosite:cn"
-    # 腾讯视频 / 云视听极光
-    - "+.qq.com"
-    - "+.qqlive.com"
-    - "+.video.qq.com"
-    # 爱奇艺 / 银河奇异果
-    - "+.iqiyi.com"
-    - "+.qiyi.com"
-    - "+.71.am"
-    # 优酷 / 酷喵
-    - "+.youku.com"
-    - "+.ykimg.com"
-    # Bilibili / 云视听小电视
-    - "+.bilibili.com"
-    - "+.hdslb.com"
 
   nameserver-policy:
     '+.06231104.xyz':
@@ -103,28 +89,55 @@ proxies:
     servername: www.bing.com
     client-fingerprint: chrome
     packet-encoding: xudp
-    ip-version: ipv4-only # 🔒 强制目标连接走纯 IPv4，全量释放万国 DNS 解锁威力
+    ip-version: ipv4-only # 🔒 强制目标连接走纯 IPv4，全力配合万国 DNS
     reality-opts:
       public-key: SVUpfWk5zDd1iND0m3koWijR2D7Y-I6amzv8oMtbmhU
       short-id: "88888888"
 
-  # --- 绿云日本-CF优选模式 ---
-  - name: "绿云日本-CF优选 (VLESS)"
+  # --- acckjp-cf 节点 ---
+  - name: "acckjp-cf"
+    type: vless
+    server: sqyh.06231104.xyz
+    port: 443
+    uuid: d212fba8-63ac-4fdb-9b82-61986f2d1f9c
+    udp: true
+    tls: true
+    tfo: true
+    servername: acck.06231104.xyz
+    alpn:
+      - http/1.1
+      - h2
+    client-fingerprint: chrome
+    skip-cert-verify: true
+    network: xhttp
+    packet-encoding: xudp
+    xhttp-opts:
+      path: /rayacck
+      host: acck.06231104.xyz
+      mode: stream-one
+
+  # --- 绿云SB-CF优选 ---
+  - name: "绿云SB-CF优选"
     type: vless
     server: sqyh.06231104.xyz
     port: 443
     uuid: f8c1ef23-f1b0-4aa6-a491-13f1af76c72e
     udp: true
     tls: true
+    tfo: true
     servername: lyrcf.06231104.xyz
+    alpn:
+      - http/1.1
+      - h2
+      - h3
     client-fingerprint: chrome
     skip-cert-verify: true
-    network: ws
-    packet-encoding: xudp 
-    ws-opts:
+    network: xhttp
+    packet-encoding: xudp
+    xhttp-opts:
       path: /raycc
-      headers:
-        Host: lyrcf.06231104.xyz
+      host: lyrcf.06231104.xyz
+      mode: stream-one
 
   # --- RN 美西 优选 ---
   - name: "RN美西-CF优选"
@@ -147,11 +160,12 @@ proxies:
 proxy-groups:
 
   - name: "🚀 自动选择"
-    type: select # 🛠️ 核心修改：已切换为纯手动选择模式，去除了 url-test 的相关参数
+    type: select
     proxies:
       - "绿云SB- Hy2"
       - "美西9929-VLESS"
-      - "绿云日本-CF优选 (VLESS)"
+      - "绿云SB-CF优选"
+      - "acckjp-cf"
       - "RN美西-CF优选"
 
   - name: "🎥 奈飞分流"
@@ -160,7 +174,8 @@ proxy-groups:
       - "🚀 自动选择"
       - "美西9929-VLESS"
       - "绿云SB- Hy2"
-      - "绿云日本-CF优选 (VLESS)"
+      - "绿云SB-CF优选"
+      - "acckjp-cf"
       - "RN美西-CF优选"
 
   - name: "🏰 迪士尼分流"
@@ -169,7 +184,8 @@ proxy-groups:
       - "🚀 自动选择"
       - "美西9929-VLESS"
       - "绿云SB- Hy2"
-      - "绿云日本-CF优选 (VLESS)"
+      - "绿云SB-CF优选"
+      - "acckjp-cf"
       - "RN美西-CF优选"
 
   - name: "🔴 YouTube分流"
@@ -178,37 +194,24 @@ proxy-groups:
       - "🚀 自动选择"
       - "美西9929-VLESS"
       - "绿云SB- Hy2"
-      - "绿云日本-CF优选 (VLESS)"
+      - "绿云SB-CF优选"
+      - "acckjp-cf"
       - "RN美西-CF优选"
 
 # ==================== 规则 ====================
 rules:
 
-  # 📺 国内电视 App 强直连（置顶防止被 Fake-IP 误伤或劫持）
-  # 腾讯视频
-  - DOMAIN-SUFFIX,qq.com,DIRECT
-  - DOMAIN-SUFFIX,qqlive.com,DIRECT
-  - DOMAIN-SUFFIX,video.qq.com,DIRECT
-  - DOMAIN-KEYWORD,qqlive,DIRECT
-  # 爱奇艺
-  - DOMAIN-SUFFIX,iqiyi.com,DIRECT
-  - DOMAIN-SUFFIX,qiyi.com,DIRECT
-  - DOMAIN-SUFFIX,71.am,DIRECT
-  # 优酷
-  - DOMAIN-SUFFIX,youku.com,DIRECT
-  - DOMAIN-SUFFIX,ykimg.com,DIRECT
-  # Bilibili
-  - DOMAIN-SUFFIX,bilibili.com,DIRECT
-  - DOMAIN-SUFFIX,hdslb.com,DIRECT
+  # 🚫 🛠️ 核心优化：无条件拒绝公共加密 DNS，斩断奈飞的 DoH 逃生管道，逼其降级回标准 UDP 53
+  - DOMAIN-SUFFIX,dns.google,REJECT
+  - DOMAIN-SUFFIX,cloudflare-dns.com,REJECT
+  - DOMAIN-SUFFIX,dns.quad9.net,REJECT
+  - DOMAIN-SUFFIX,adguard-dns.com,REJECT
+  - GEOSITE,category-http3-dns,REJECT
 
-  # Netflix
+  # Netflix 终极封堵
+  - GEOSITE,netflix,🎥 奈飞分流
+  - GEOIP,netflix,🎥 奈飞分流 # 🛠️ 核心优化：加入全量奈飞自建 CDN IP 库，即使有漏网 IP 连过来也必须强制走奈飞分流
   - DOMAIN-KEYWORD,netflix,🎥 奈飞分流
-  - DOMAIN-SUFFIX,netflix.com,🎥 奈飞分流
-  - DOMAIN-SUFFIX,netflix.net,🎥 奈飞分流
-  - DOMAIN-SUFFIX,nflxext.com,🎥 奈飞分流
-  - DOMAIN-SUFFIX,nflxso.net,🎥 奈飞分流
-  - DOMAIN-SUFFIX,nflximg.net,🎥 奈飞分流
-  - DOMAIN-SUFFIX,nflxvideo.net,🎥 奈飞分流
 
   # Disney+
   - DOMAIN-SUFFIX,disneyplus.com,🏰 迪士尼分流
