@@ -129,7 +129,6 @@ proxies:
     alpn:
       - http/1.1
       - h2
-      - h3
     client-fingerprint: chrome
     skip-cert-verify: true
     network: xhttp
