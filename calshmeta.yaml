@@ -129,6 +129,7 @@ proxies:
     alpn:
       - http/1.1
       - h2
+      - h3
     client-fingerprint: chrome
     skip-cert-verify: true
     network: xhttp
@@ -200,16 +201,15 @@ proxy-groups:
 # ==================== 规则 ====================
 rules:
 
-  # 🚫 🛠️ 核心优化：无条件拒绝公共加密 DNS，斩断奈飞的 DoH 逃生管道，逼其降级回标准 UDP 53
+  # 🚫 斩断奈飞的 DoH 逃生管道（已剔除导致电视报错的旧库依赖项）
   - DOMAIN-SUFFIX,dns.google,REJECT
   - DOMAIN-SUFFIX,cloudflare-dns.com,REJECT
   - DOMAIN-SUFFIX,dns.quad9.net,REJECT
   - DOMAIN-SUFFIX,adguard-dns.com,REJECT
-  - GEOSITE,category-http3-dns,REJECT
 
-  # Netflix 终极封堵
+  # Netflix 终极分流
   - GEOSITE,netflix,🎥 奈飞分流
-  - GEOIP,netflix,🎥 奈飞分流 # 🛠️ 核心优化：加入全量奈飞自建 CDN IP 库，即使有漏网 IP 连过来也必须强制走奈飞分流
+  - GEOIP,netflix,🎥 奈飞分流 
   - DOMAIN-KEYWORD,netflix,🎥 奈飞分流
 
   # Disney+
