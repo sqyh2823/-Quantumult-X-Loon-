@@ -2,18 +2,17 @@ mixed-port: 7890
 allow-lan: true
 mode: rule
 log-level: info
-ipv6: false # Clash 层面关闭 IPv6 处理，配合路由器关闭 IPv6 效果达到完全体
+ipv6: false # 完全关闭 IPv6 环境
 
 # ==================== DNS ====================
 dns:
   enable: true
-  ipv6: false # 🔒 严格禁止 DNS 层面解析 AAAA (IPv6) 记录
+  ipv6: false 
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
-  listen: 0.0.0.0:1053 # 显式监听本地 DNS 端口
+  listen: 0.0.0.0:1053 
   respect-rules: true
 
-  # 🚀 拦截传统 DNS 偷跑
   dns-hijack:
     - 'any:53'
     - 'tcp://any:53'
@@ -26,12 +25,10 @@ dns:
     - https://doh.pub/dns-query
     - https://dns.alicdn.com/dns-query
 
-  # 🛠️ 针对电视端报错的核心修复点：当 respect-rules 开启时，此项绝对不能为空
   proxy-server-nameserver:
     - 223.5.5.5
     - 119.29.29.29
 
-  # 🔒 仅保留大方向的中国大陆 IP/域名不走 Fake-IP
   fake-ip-filter:
     - "geoip:cn"
     - "geosite:cn"
@@ -89,7 +86,7 @@ proxies:
     servername: www.bing.com
     client-fingerprint: chrome
     packet-encoding: xudp
-    ip-version: ipv4-only # 🔒 强制目标连接走纯 IPv4，全力配合万国 DNS
+    ip-version: ipv4-only # 🔒 严格锁定纯 IPv4
     reality-opts:
       public-key: SVUpfWk5zDd1iND0m3koWijR2D7Y-I6amzv8oMtbmhU
       short-id: "88888888"
@@ -201,15 +198,20 @@ proxy-groups:
 # ==================== 规则 ====================
 rules:
 
-  # 🚫 斩断奈飞的 DoH 逃生管道（已剔除导致电视报错的旧库依赖项）
+  # 🚫 斩断奈飞的 DoH 逃生管道
   - DOMAIN-SUFFIX,dns.google,REJECT
   - DOMAIN-SUFFIX,cloudflare-dns.com,REJECT
   - DOMAIN-SUFFIX,dns.quad9.net,REJECT
   - DOMAIN-SUFFIX,adguard-dns.com,REJECT
 
-  # Netflix 终极分流
+  # Netflix 严格域名分流（🔒 删除了干扰万国 DNS 的 GEOIP 规则）
   - GEOSITE,netflix,🎥 奈飞分流
-  - GEOIP,netflix,🎥 奈飞分流 
+  - DOMAIN-SUFFIX,netflix.com,🎥 奈飞分流
+  - DOMAIN-SUFFIX,netflix.net,🎥 奈飞分流
+  - DOMAIN-SUFFIX,nflxext.com,🎥 奈飞分流
+  - DOMAIN-SUFFIX,nflxso.net,🎥 奈飞分流
+  - DOMAIN-SUFFIX,nflximg.net,🎥 奈飞分流
+  - DOMAIN-SUFFIX,nflxvideo.net,🎥 奈飞分流
   - DOMAIN-KEYWORD,netflix,🎥 奈飞分流
 
   # Disney+
