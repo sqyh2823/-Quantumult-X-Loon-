@@ -2,17 +2,18 @@ mixed-port: 7890
 allow-lan: true
 mode: rule
 log-level: info
-ipv6: false # 完全关闭 IPv6 环境
+ipv6: false # Clash 层面关闭 IPv6 处理，配合路由器关闭 IPv6 效果达到完全体
 
 # ==================== DNS ====================
 dns:
   enable: true
-  ipv6: false 
+  ipv6: false # 🔒 严格禁止 DNS 层面解析 AAAA (IPv6) 记录
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
-  listen: 0.0.0.0:1053 
+  listen: 0.0.0.0:1053 # 显式监听本地 DNS 端口
   respect-rules: true
 
+  # 🚀 拦截传统 DNS 偷跑
   dns-hijack:
     - 'any:53'
     - 'tcp://any:53'
@@ -25,10 +26,12 @@ dns:
     - https://doh.pub/dns-query
     - https://dns.alicdn.com/dns-query
 
+  # 🛠️ 针对电视端报错的核心修复点：当 respect-rules 开启时，此项绝对不能为空
   proxy-server-nameserver:
     - 223.5.5.5
     - 119.29.29.29
 
+  # 🔒 仅保留大方向的中国大陆 IP/域名不走 Fake-IP
   fake-ip-filter:
     - "geoip:cn"
     - "geosite:cn"
@@ -57,21 +60,6 @@ dns:
 # ==================== 节点 ====================
 proxies:
 
-  # --- 绿云SB-hy2节点 ---
-  - name: "绿云SB- Hy2"
-    type: hysteria2
-    server: 45.143.131.45
-    port: 22228
-    password: ookozbp180yco4f8
-    sni: www.apple.com
-    alpn:
-      - h3
-    client-fingerprint: chrome
-    skip-cert-verify: true
-    fast-open: false 
-    up: "50 Mbps"
-    down: "800 Mbps"
-
   # --- 美西 9929 精英线 ---
   - name: "美西9929-VLESS"
     type: vless
@@ -86,55 +74,65 @@ proxies:
     servername: www.bing.com
     client-fingerprint: chrome
     packet-encoding: xudp
-    ip-version: ipv4-only # 🔒 严格锁定纯 IPv4
+    ip-version: ipv4-only 
     reality-opts:
       public-key: SVUpfWk5zDd1iND0m3koWijR2D7Y-I6amzv8oMtbmhU
       short-id: "88888888"
 
-  # --- acckjp-cf 节点 ---
-  - name: "acckjp-cf"
+  # --- 美西CN2-VLESS ---
+  - name: "美西CN2-VLESS"
     type: vless
-    server: sqyh.06231104.xyz
-    port: 443
-    uuid: d212fba8-63ac-4fdb-9b82-61986f2d1f9c
+    server: 38.55.108.187
+    port: 22222
+    uuid: 479caf6c-62ef-4f6c-a8bb-480e00b70e01
+    network: tcp
+    fast-open: false 
     udp: true
     tls: true
-    tfo: true
-    servername: acck.06231104.xyz
-    alpn:
-      - http/1.1
-      - h2
+    flow: xtls-rprx-vision
+    servername: www.microsoft.com
     client-fingerprint: chrome
-    skip-cert-verify: true
-    network: xhttp
     packet-encoding: xudp
-    xhttp-opts:
-      path: /rayacck
-      host: acck.06231104.xyz
-      mode: stream-one
+    reality-opts:
+      public-key: _LrGdm7IfbBey-7w2m4jT-eWh2oIy3BP_44ma3kkERw
+      short-id: "88888888"
 
-  # --- 绿云SB-CF优选 ---
-  - name: "绿云SB-CF优选"
+  # --- TW-vless (台湾家宽) ---
+  - name: "TW-vless"
+    type: vless
+    server: akile-hinet-d3f923.645781.xyz
+    port: 20801 
+    uuid: 95407fe3-5c24-46ea-989d-6f185d6c5c99
+    network: tcp
+    fast-open: false 
+    udp: true
+    tls: true
+    flow: xtls-rprx-vision
+    servername: www.microsoft.com
+    client-fingerprint: chrome
+    packet-encoding: xudp
+    reality-opts:
+      public-key: bzEEUouRUhNHNBGX-ck9aQKQqmRxqZC_0YdSmCOaewY
+      short-id: "88888888"
+
+  # --- 绿云SB-CF (VLESS + WS + TLS) ---
+  - name: "绿云SB-CF"
     type: vless
     server: sqyh.06231104.xyz
     port: 443
-    uuid: f8c1ef23-f1b0-4aa6-a491-13f1af76c72e
+    uuid: c200c7e7-78a6-4e7f-ab0b-3ce41deff3be
     udp: true
     tls: true
     tfo: true
     servername: lyrcf.06231104.xyz
-    alpn:
-      - http/1.1
-      - h2
-      - h3
     client-fingerprint: chrome
     skip-cert-verify: true
-    network: xhttp
+    network: ws
     packet-encoding: xudp
-    xhttp-opts:
-      path: /raycc
-      host: lyrcf.06231104.xyz
-      mode: stream-one
+    ws-opts:
+      path: /raysb
+      headers:
+        Host: lyrcf.06231104.xyz
 
   # --- RN 美西 优选 ---
   - name: "RN美西-CF优选"
@@ -156,55 +154,66 @@ proxies:
 # ==================== 策略组 ====================
 proxy-groups:
 
-  - name: "🚀 自动选择"
-    type: select
+  # 🛠️ 核心新增：链式代理中继策略组（软银前置 -> 台湾家宽落地）
+  - name: "🔗 软银->TW家宽链式"
+    type: relay
     proxies:
-      - "绿云SB- Hy2"
+      - "绿云SB-CF"   # 第一级：软银优化线跑前程
+      - "TW-vless"    # 第二级：台湾原生家宽解一切流媒体
+
+  - name: "🚀 自动选择"
+    type: select 
+    proxies:
+      - "🔗 软银->TW家宽链式"
+      - "TW-vless"
       - "美西9929-VLESS"
-      - "绿云SB-CF优选"
-      - "acckjp-cf"
+      - "美西CN2-VLESS"
+      - "绿云SB-CF"
       - "RN美西-CF优选"
 
   - name: "🎥 奈飞分流"
     type: select
     proxies:
+      - "🔗 软银->TW家宽链式"
       - "🚀 自动选择"
+      - "TW-vless"
       - "美西9929-VLESS"
-      - "绿云SB- Hy2"
-      - "绿云SB-CF优选"
-      - "acckjp-cf"
+      - "美西CN2-VLESS"
+      - "绿云SB-CF"
       - "RN美西-CF优选"
 
   - name: "🏰 迪士尼分流"
     type: select
     proxies:
+      - "🔗 软银->TW家宽链式"
       - "🚀 自动选择"
+      - "TW-vless"
       - "美西9929-VLESS"
-      - "绿云SB- Hy2"
-      - "绿云SB-CF优选"
-      - "acckjp-cf"
+      - "美西CN2-VLESS"
+      - "绿云SB-CF"
       - "RN美西-CF优选"
 
   - name: "🔴 YouTube分流"
     type: select
     proxies:
+      - "🔗 软银->TW家宽链式"
       - "🚀 自动选择"
+      - "TW-vless"
       - "美西9929-VLESS"
-      - "绿云SB- Hy2"
-      - "绿云SB-CF优选"
-      - "acckjp-cf"
+      - "美西CN2-VLESS"
+      - "绿云SB-CF"
       - "RN美西-CF优选"
 
 # ==================== 规则 ====================
 rules:
 
-  # 🚫 斩断奈飞的 DoH 逃生管道
+  # 🚫 斩断奈飞的 DoH 加密 DNS 逃生管道
   - DOMAIN-SUFFIX,dns.google,REJECT
   - DOMAIN-SUFFIX,cloudflare-dns.com,REJECT
   - DOMAIN-SUFFIX,dns.quad9.net,REJECT
   - DOMAIN-SUFFIX,adguard-dns.com,REJECT
 
-  # Netflix 严格域名分流（🔒 删除了干扰万国 DNS 的 GEOIP 规则）
+  # Netflix 严格域名分流
   - GEOSITE,netflix,🎥 奈飞分流
   - DOMAIN-SUFFIX,netflix.com,🎥 奈飞分流
   - DOMAIN-SUFFIX,netflix.net,🎥 奈飞分流
