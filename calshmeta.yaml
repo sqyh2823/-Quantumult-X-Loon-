@@ -97,24 +97,6 @@ proxies:
       public-key: _LrGdm7IfbBey-7w2m4jT-eWh2oIy3BP_44ma3kkERw
       short-id: "88888888"
 
-  # --- TW-vless (台湾家宽) ---
-  - name: "TW-vless"
-    type: vless
-    server: akile-hinet-d3f923.645781.xyz
-    port: 20801 
-    uuid: 95407fe3-5c24-46ea-989d-6f185d6c5c99
-    network: tcp
-    fast-open: false 
-    udp: true
-    tls: true
-    flow: xtls-rprx-vision
-    servername: www.microsoft.com
-    client-fingerprint: chrome
-    packet-encoding: xudp
-    reality-opts:
-      public-key: bzEEUouRUhNHNBGX-ck9aQKQqmRxqZC_0YdSmCOaewY
-      short-id: "88888888"
-
   # --- 绿云SB-CF (VLESS + WS + TLS) ---
   - name: "绿云SB-CF"
     type: vless
@@ -133,6 +115,43 @@ proxies:
       path: /raysb
       headers:
         Host: lyrcf.06231104.xyz
+
+  # --- TW-vless (原版台湾家宽-独立直连) ---
+  - name: "TW-vless"
+    type: vless
+    server: akile-hinet-d3f923.645781.xyz
+    port: 20801 
+    uuid: 95407fe3-5c24-46ea-989d-6f185d6c5c99
+    network: tcp
+    fast-open: false 
+    udp: true
+    tls: true
+    flow: xtls-rprx-vision
+    servername: www.microsoft.com
+    client-fingerprint: chrome
+    packet-encoding: xudp
+    reality-opts:
+      public-key: bzEEUouRUhNHNBGX-ck9aQKQqmRxqZC_0YdSmCOaewY
+      short-id: "88888888"
+
+  # --- 🔗 TW-vless (软银中继版-高阶级链式代理) ---
+  - name: "TW-vless(软银中继)"
+    type: vless
+    server: akile-hinet-d3f923.645781.xyz
+    port: 20801 
+    uuid: 95407fe3-5c24-46ea-989d-6f185d6c5c99
+    network: tcp
+    fast-open: false 
+    udp: true
+    tls: true
+    flow: xtls-rprx-vision
+    servername: www.microsoft.com
+    client-fingerprint: chrome
+    packet-encoding: xudp
+    dialer-proxy: "绿云SB-CF" # 🛠️ 核心修复：ClashMeta 原生链式属性，底层无缝嵌套，且绝不引发 UI 报错！
+    reality-opts:
+      public-key: bzEEUouRUhNHNBGX-ck9aQKQqmRxqZC_0YdSmCOaewY
+      short-id: "88888888"
 
   # --- RN 美西 优选 ---
   - name: "RN美西-CF优选"
@@ -154,17 +173,10 @@ proxies:
 # ==================== 策略组 ====================
 proxy-groups:
 
-  # 🛠️ 核心新增：链式代理中继策略组（软银前置 -> 台湾家宽落地）
-  - name: "🔗 软银->TW家宽链式"
-    type: relay
-    proxies:
-      - "绿云SB-CF"   # 第一级：软银优化线跑前程
-      - "TW-vless"    # 第二级：台湾原生家宽解一切流媒体
-
   - name: "🚀 自动选择"
-    type: select 
+    type: select # 🛠️ 严格去除了导致报错的 type: relay 组，全面回归 100% 安全的 select 架构
     proxies:
-      - "🔗 软银->TW家宽链式"
+      - "TW-vless(软银中继)" # 默认首选这个完美的链式组合即可
       - "TW-vless"
       - "美西9929-VLESS"
       - "美西CN2-VLESS"
@@ -174,7 +186,7 @@ proxy-groups:
   - name: "🎥 奈飞分流"
     type: select
     proxies:
-      - "🔗 软银->TW家宽链式"
+      - "TW-vless(软银中继)"
       - "🚀 自动选择"
       - "TW-vless"
       - "美西9929-VLESS"
@@ -185,7 +197,7 @@ proxy-groups:
   - name: "🏰 迪士尼分流"
     type: select
     proxies:
-      - "🔗 软银->TW家宽链式"
+      - "TW-vless(软银中继)"
       - "🚀 自动选择"
       - "TW-vless"
       - "美西9929-VLESS"
@@ -196,7 +208,7 @@ proxy-groups:
   - name: "🔴 YouTube分流"
     type: select
     proxies:
-      - "🔗 软银->TW家宽链式"
+      - "TW-vless(软银中继)"
       - "🚀 自动选择"
       - "TW-vless"
       - "美西9929-VLESS"
