@@ -119,8 +119,8 @@ proxies:
   # --- TW-vless (原版台湾家宽-独立直连) ---
   - name: "TW-vless"
     type: vless
-    server: akile-hinet-d3f923.645781.xyz
-    port: 20801 
+    server: 154.36.187.249
+    port: 22222 
     uuid: 95407fe3-5c24-46ea-989d-6f185d6c5c99
     network: tcp
     fast-open: false 
@@ -130,25 +130,6 @@ proxies:
     servername: www.microsoft.com
     client-fingerprint: chrome
     packet-encoding: xudp
-    reality-opts:
-      public-key: bzEEUouRUhNHNBGX-ck9aQKQqmRxqZC_0YdSmCOaewY
-      short-id: "88888888"
-
-  # --- 🔗 TW-vless (软银中继版-高阶级链式代理) ---
-  - name: "TW-vless(软银中继)"
-    type: vless
-    server: akile-hinet-d3f923.645781.xyz
-    port: 20801 
-    uuid: 95407fe3-5c24-46ea-989d-6f185d6c5c99
-    network: tcp
-    fast-open: false 
-    udp: true
-    tls: true
-    flow: xtls-rprx-vision
-    servername: www.microsoft.com
-    client-fingerprint: chrome
-    packet-encoding: xudp
-    dialer-proxy: "绿云SB-CF" # 🛠️ 核心修复：ClashMeta 原生链式属性，底层无缝嵌套，且绝不引发 UI 报错！
     reality-opts:
       public-key: bzEEUouRUhNHNBGX-ck9aQKQqmRxqZC_0YdSmCOaewY
       short-id: "88888888"
@@ -176,7 +157,6 @@ proxy-groups:
   - name: "🚀 自动选择"
     type: select # 🛠️ 严格去除了导致报错的 type: relay 组，全面回归 100% 安全的 select 架构
     proxies:
-      - "TW-vless(软银中继)" # 默认首选这个完美的链式组合即可
       - "TW-vless"
       - "美西9929-VLESS"
       - "美西CN2-VLESS"
@@ -186,7 +166,6 @@ proxy-groups:
   - name: "🎥 奈飞分流"
     type: select
     proxies:
-      - "TW-vless(软银中继)"
       - "🚀 自动选择"
       - "TW-vless"
       - "美西9929-VLESS"
@@ -197,7 +176,6 @@ proxy-groups:
   - name: "🏰 迪士尼分流"
     type: select
     proxies:
-      - "TW-vless(软银中继)"
       - "🚀 自动选择"
       - "TW-vless"
       - "美西9929-VLESS"
@@ -208,7 +186,6 @@ proxy-groups:
   - name: "🔴 YouTube分流"
     type: select
     proxies:
-      - "TW-vless(软银中继)"
       - "🚀 自动选择"
       - "TW-vless"
       - "美西9929-VLESS"
