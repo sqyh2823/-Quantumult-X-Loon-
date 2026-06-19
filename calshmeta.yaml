@@ -119,20 +119,21 @@ proxies:
   # --- TW-vless (原版台湾家宽-独立直连) ---
   - name: "TW-vless"
     type: vless
-    server: 154.36.187.249
-    port: 22222 
-    uuid: 95407fe3-5c24-46ea-989d-6f185d6c5c99
-    network: tcp
-    fast-open: false 
+    server: sqyh.06231104.xyz
+    port: 8443
+    uuid: a2a67a42-f400-45fa-a2bd-7a93e0920f35
     udp: true
     tls: true
-    flow: xtls-rprx-vision
-    servername: www.microsoft.com
+    tfo: true
+    servername: tw.06231104.xyz
     client-fingerprint: chrome
+    skip-cert-verify: true
+    network: ws
     packet-encoding: xudp
-    reality-opts:
-      public-key: bzEEUouRUhNHNBGX-ck9aQKQqmRxqZC_0YdSmCOaewY
-      short-id: "88888888"
+    ws-opts:
+      path: /ray-te
+      headers:
+        Host: tw.06231104.xyz
 
   # --- RN 美西 优选 ---
   - name: "RN美西-CF优选"
