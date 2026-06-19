@@ -120,7 +120,7 @@ proxies:
   - name: "TW-vless"
     type: vless
     server: sqyh.06231104.xyz
-    port: 8443
+    port: 443
     uuid: a2a67a42-f400-45fa-a2bd-7a93e0920f35
     udp: true
     tls: true
