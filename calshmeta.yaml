@@ -123,7 +123,7 @@ proxies:
     port: 22222
     uuid: 95407fe3-5c24-46ea-989d-6f185d6c5c99
     network: tcp
-    fast-open: false 
+    fast-open: true 
     udp: true
     tls: true
     flow: xtls-rprx-vision
