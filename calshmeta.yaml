@@ -90,7 +90,7 @@ proxies:
     udp: true
     tls: true
     flow: xtls-rprx-vision
-    servername: www.microsoft.com
+    servername: www.yahoo.com
     client-fingerprint: chrome
     packet-encoding: xudp
     reality-opts:
@@ -116,25 +116,7 @@ proxies:
       headers:
         Host: lyrcf.06231104.xyz
 
-  # --- TW-vless (原版台湾家宽-独立直连) ---
-  - name: "TW-vless"
-    type: vless
-    server: 154.36.187.249
-    port: 22222
-    uuid: 95407fe3-5c24-46ea-989d-6f185d6c5c99
-    network: tcp
-    fast-open: true 
-    udp: true
-    tls: true
-    flow: xtls-rprx-vision
-    servername: www.microsoft.com
-    client-fingerprint: chrome
-    packet-encoding: xudp
-    reality-opts:
-      public-key: bzEEUouRUhNHNBGX-ck9aQKQqmRxqZC_0YdSmCOaewY
-      short-id: "88888888"
-
-  # --- RN 美西 优选 ---
+   # --- RN 美西 优选 ---
   - name: "RN美西-CF优选"
     type: vless
     server: sqyh.06231104.xyz
@@ -157,7 +139,6 @@ proxy-groups:
   - name: "🚀 自动选择"
     type: select # 🛠️ 严格去除了导致报错的 type: relay 组，全面回归 100% 安全的 select 架构
     proxies:
-      - "TW-vless"
       - "美西9929-VLESS"
       - "美西CN2-VLESS"
       - "绿云SB-CF"
@@ -167,7 +148,6 @@ proxy-groups:
     type: select
     proxies:
       - "🚀 自动选择"
-      - "TW-vless"
       - "美西9929-VLESS"
       - "美西CN2-VLESS"
       - "绿云SB-CF"
@@ -177,7 +157,6 @@ proxy-groups:
     type: select
     proxies:
       - "🚀 自动选择"
-      - "TW-vless"
       - "美西9929-VLESS"
       - "美西CN2-VLESS"
       - "绿云SB-CF"
@@ -187,7 +166,6 @@ proxy-groups:
     type: select
     proxies:
       - "🚀 自动选择"
-      - "TW-vless"
       - "美西9929-VLESS"
       - "美西CN2-VLESS"
       - "绿云SB-CF"
