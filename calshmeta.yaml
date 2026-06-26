@@ -60,25 +60,6 @@ dns:
 # ==================== 节点 ====================
 proxies:
 
-  # --- 美西 9929 精英线 ---
-  - name: "美西9929-VLESS"
-    type: vless
-    server: 38.47.113.6
-    port: 22222
-    uuid: 59dde1dd-c89d-4cfc-997f-28133d25deb0
-    network: tcp
-    fast-open: false 
-    udp: true
-    tls: true
-    flow: xtls-rprx-vision
-    servername: www.bing.com
-    client-fingerprint: chrome
-    packet-encoding: xudp
-    ip-version: ipv4-only 
-    reality-opts:
-      public-key: SVUpfWk5zDd1iND0m3koWijR2D7Y-I6amzv8oMtbmhU
-      short-id: "88888888"
-
   # --- 美西CN2-VLESS ---
   - name: "美西CN2-VLESS"
     type: vless
@@ -90,12 +71,48 @@ proxies:
     udp: true
     tls: true
     flow: xtls-rprx-vision
-    servername: www.yahoo.com
+    servername: www.apple.com
     client-fingerprint: chrome
     packet-encoding: xudp
     reality-opts:
       public-key: _LrGdm7IfbBey-7w2m4jT-eWh2oIy3BP_44ma3kkERw
       short-id: "88888888"
+
+  # --- 台湾家宽2-Vless ---
+  - name: "台湾家宽2-Vless"
+    type: vless
+    server: hinet-1.lazycat.cv
+    port: 25200
+    uuid: 8c9ca8d3-7654-4d10-ae6c-8729451101e0
+    network: tcp
+    fast-open: false 
+    udp: true
+    tls: true
+    flow: xtls-rprx-vision
+    servername: images-na.ssl-images-amazon.com
+    client-fingerprint: chrome
+    packet-encoding: xudp
+    reality-opts:
+      public-key: P6wc0zClFHgt_85dKatT7mV_H0OAl2P-1XKaN8egXE0
+      short-id: d306fbb8b833dfec
+
+  # --- 台湾家宽1-CF (新加节点) ---
+  - name: "台湾家宽1-CF"
+    type: vless
+    server: sqyh.06231104.xyz
+    port: 443
+    uuid: c40bb794-3370-4d98-9a6a-2b5cce13d2f9
+    udp: true
+    tls: true
+    network: ws
+    sni: tw.06231104.xyz
+    client-fingerprint: chrome
+    skip-cert-verify: true
+    packet-encoding: xudp
+    ws-opts:
+      path: /cf-clean
+      headers:
+        Host: tw.06231104.xyz
 
   # --- 绿云SB-CF (VLESS + WS + TLS) ---
   - name: "绿云SB-CF"
@@ -116,7 +133,7 @@ proxies:
       headers:
         Host: lyrcf.06231104.xyz
 
-   # --- RN 美西 优选 ---
+  # --- RN 美西 优选 ---
   - name: "RN美西-CF优选"
     type: vless
     server: sqyh.06231104.xyz
@@ -137,9 +154,10 @@ proxies:
 proxy-groups:
 
   - name: "🚀 自动选择"
-    type: select # 🛠️ 严格去除了导致报错的 type: relay 组，全面回归 100% 安全的 select 架构
+    type: select # 手动选择模式
     proxies:
-      - "美西9929-VLESS"
+      - "台湾家宽2-Vless"
+      - "台湾家宽1-CF" # 🛠️ 已同步添加
       - "美西CN2-VLESS"
       - "绿云SB-CF"
       - "RN美西-CF优选"
@@ -148,7 +166,8 @@ proxy-groups:
     type: select
     proxies:
       - "🚀 自动选择"
-      - "美西9929-VLESS"
+      - "台湾家宽2-Vless"
+      - "台湾家宽1-CF" # 🛠️ 已同步添加
       - "美西CN2-VLESS"
       - "绿云SB-CF"
       - "RN美西-CF优选"
@@ -157,7 +176,8 @@ proxy-groups:
     type: select
     proxies:
       - "🚀 自动选择"
-      - "美西9929-VLESS"
+      - "台湾家宽2-Vless"
+      - "台湾家宽1-CF" # 🛠️ 已同步添加
       - "美西CN2-VLESS"
       - "绿云SB-CF"
       - "RN美西-CF优选"
@@ -166,7 +186,8 @@ proxy-groups:
     type: select
     proxies:
       - "🚀 自动选择"
-      - "美西9929-VLESS"
+      - "台湾家宽2-Vless"
+      - "台湾家宽1-CF" # 🛠️ 已同步添加
       - "美西CN2-VLESS"
       - "绿云SB-CF"
       - "RN美西-CF优选"
