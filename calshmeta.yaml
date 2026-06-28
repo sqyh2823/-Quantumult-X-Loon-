@@ -78,24 +78,6 @@ proxies:
       public-key: _LrGdm7IfbBey-7w2m4jT-eWh2oIy3BP_44ma3kkERw
       short-id: "88888888"
 
-  # --- 台湾家宽2-Vless ---
-  - name: "台湾家宽2-Vless"
-    type: vless
-    server: hinet-1.lazycat.cv
-    port: 25200
-    uuid: 8c9ca8d3-7654-4d10-ae6c-8729451101e0
-    network: tcp
-    fast-open: false 
-    udp: true
-    tls: true
-    flow: xtls-rprx-vision
-    servername: images-na.ssl-images-amazon.com
-    client-fingerprint: chrome
-    packet-encoding: xudp
-    reality-opts:
-      public-key: P6wc0zClFHgt_85dKatT7mV_H0OAl2P-1XKaN8egXE0
-      short-id: d306fbb8b833dfec
-
   # --- 台湾家宽1-CF (新加节点) ---
   - name: "台湾家宽1-CF"
     type: vless
@@ -156,8 +138,7 @@ proxy-groups:
   - name: "🚀 自动选择"
     type: select # 手动选择模式
     proxies:
-      - "台湾家宽2-Vless"
-      - "台湾家宽1-CF" # 🛠️ 已同步添加
+      - "台湾家宽1-CF"
       - "美西CN2-VLESS"
       - "绿云SB-CF"
       - "RN美西-CF优选"
@@ -166,8 +147,7 @@ proxy-groups:
     type: select
     proxies:
       - "🚀 自动选择"
-      - "台湾家宽2-Vless"
-      - "台湾家宽1-CF" # 🛠️ 已同步添加
+      - "台湾家宽1-CF"
       - "美西CN2-VLESS"
       - "绿云SB-CF"
       - "RN美西-CF优选"
@@ -176,8 +156,7 @@ proxy-groups:
     type: select
     proxies:
       - "🚀 自动选择"
-      - "台湾家宽2-Vless"
-      - "台湾家宽1-CF" # 🛠️ 已同步添加
+      - "台湾家宽1-CF"
       - "美西CN2-VLESS"
       - "绿云SB-CF"
       - "RN美西-CF优选"
@@ -186,8 +165,7 @@ proxy-groups:
     type: select
     proxies:
       - "🚀 自动选择"
-      - "台湾家宽2-Vless"
-      - "台湾家宽1-CF" # 🛠️ 已同步添加
+      - "台湾家宽1-CF"
       - "美西CN2-VLESS"
       - "绿云SB-CF"
       - "RN美西-CF优选"
