@@ -92,7 +92,7 @@ proxies:
     skip-cert-verify: true
     packet-encoding: xudp
     ws-opts:
-      path: /cf-clean
+      path: /
       headers:
         Host: tw.06231104.xyz
 
