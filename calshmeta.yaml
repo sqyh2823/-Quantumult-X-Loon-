@@ -134,37 +134,19 @@ proxies:
 
 # ==================== 策略组 ====================
 proxy-groups:
-
+  # 保持你的手动选择组，用于日常网页
   - name: "🚀 自动选择"
-    type: select # 手动选择模式
+    type: select
     proxies:
       - "台湾家宽1-CF"
       - "美西CN2-VLESS"
       - "绿云SB-CF"
       - "RN美西-CF优选"
 
+  # 🎥 奈飞专门组：删掉嵌套的“🚀 自动选择”，直接放具体节点，并在面板上手动钉死在解锁最稳的节点上
   - name: "🎥 奈飞分流"
     type: select
     proxies:
-      - "🚀 自动选择"
-      - "台湾家宽1-CF"
-      - "美西CN2-VLESS"
-      - "绿云SB-CF"
-      - "RN美西-CF优选"
-
-  - name: "🏰 迪士尼分流"
-    type: select
-    proxies:
-      - "🚀 自动选择"
-      - "台湾家宽1-CF"
-      - "美西CN2-VLESS"
-      - "绿云SB-CF"
-      - "RN美西-CF优选"
-
-  - name: "🔴 YouTube分流"
-    type: select
-    proxies:
-      - "🚀 自动选择"
       - "台湾家宽1-CF"
       - "美西CN2-VLESS"
       - "绿云SB-CF"
@@ -172,40 +154,40 @@ proxy-groups:
 
 # ==================== 规则 ====================
 rules:
-
-  # 🚫 斩断奈飞的 DoH 加密 DNS 逃生管道
+  # 🚫 斩断已知 DoH 逃生管道
   - DOMAIN-SUFFIX,dns.google,REJECT
   - DOMAIN-SUFFIX,cloudflare-dns.com,REJECT
   - DOMAIN-SUFFIX,dns.quad9.net,REJECT
   - DOMAIN-SUFFIX,adguard-dns.com,REJECT
 
-  # Netflix 严格域名分流
-  - GEOSITE,netflix,🎥 奈飞分流
+  # 🎥 Netflix 极其激进的域名与关键字强锁（防止 OCA 流媒体漏包）
+  - DOMAIN-KEYWORD,netflix,🎥 奈飞分流
   - DOMAIN-SUFFIX,netflix.com,🎥 奈飞分流
   - DOMAIN-SUFFIX,netflix.net,🎥 奈飞分流
   - DOMAIN-SUFFIX,nflxext.com,🎥 奈飞分流
   - DOMAIN-SUFFIX,nflxso.net,🎥 奈飞分流
   - DOMAIN-SUFFIX,nflximg.net,🎥 奈飞分流
   - DOMAIN-SUFFIX,nflxvideo.net,🎥 奈飞分流
-  - DOMAIN-KEYWORD,netflix,🎥 奈飞分流
+  - DOMAIN-SUFFIX,netflixdnstest0.com,🎥 奈飞分流
+  - DOMAIN-SUFFIX,netflixdnstest1.com,🎥 奈飞分流
+  - DOMAIN-SUFFIX,netflixdnstest2.com,🎥 奈飞分流
+  - DOMAIN-SUFFIX,netflixdnstest3.com,🎥 奈飞分流
+  - DOMAIN-SUFFIX,netflixdnstest4.com,🎥 奈飞分流
+  - DOMAIN-SUFFIX,netflixdnstest5.com,🎥 奈飞分流
+  - DOMAIN-SUFFIX,netflixdnstest6.com,🎥 奈飞分流
+  - DOMAIN-SUFFIX,netflixdnstest7.com,🎥 奈飞分流
+  - DOMAIN-SUFFIX,netflixdnstest8.com,🎥 奈飞分流
+  - DOMAIN-SUFFIX,netflixdnstest9.com,🎥 奈飞分流
+  - GEOSITE,netflix,🎥 奈飞分流
 
-  # Disney+
-  - DOMAIN-SUFFIX,disneyplus.com,🏰 迪士尼分流
-  - DOMAIN-SUFFIX,disney-plus.net,🏰 迪士尼分流
-  - DOMAIN-SUFFIX,disneystreaming.com,🏰 迪士尼分流
-  - DOMAIN-SUFFIX,dssott.com,🏰 迪士尼分流
+  # 其他流媒体保持原样...
+  - GEOSITE,disney,🏰 迪士尼分流
+  - GEOSITE,youtube,🔴 YouTube分流
 
-  # YouTube
-  - DOMAIN-SUFFIX,googlevideo.com,🔴 YouTube分流
-  - DOMAIN-SUFFIX,youtube.com,🔴 YouTube分流
-  - DOMAIN-SUFFIX,ytimg.com,🔴 YouTube分流
-
-  # AI
+  # AI 与国内直连
   - DOMAIN-SUFFIX,openai.com,🚀 自动选择
   - DOMAIN-SUFFIX,chatgpt.com,🚀 自动选择
   - DOMAIN-SUFFIX,anthropic.com,🚀 自动选择
-
-  # 国内直连
   - GEOIP,CN,DIRECT
 
   # 默认
