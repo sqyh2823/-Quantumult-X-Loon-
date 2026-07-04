@@ -92,7 +92,7 @@ proxies:
     skip-cert-verify: true
     packet-encoding: xudp
     ws-opts:
-      path: /
+      path: /cf-clean
       headers:
         Host: tw.06231104.xyz
 
@@ -120,17 +120,17 @@ proxies:
     type: vless
     server: sqyh.06231104.xyz
     port: 443
-    uuid: 2ed31204-f8b5-45e0-86b7-d913a2eff3e8
+    uuid: 2f16a2f6-8a86-4e5a-827f-31e29d111d5d
     udp: true
     tls: true
-    servername: node.06231104.xyz
+    servername: akile.06231104.xyz
     client-fingerprint: chrome
     skip-cert-verify: true
     network: ws
     ws-opts:
-      path: /raycd
+      path: /ray-akile
       headers:
-        Host: node.06231104.xyz
+        Host: akile.06231104.xyz
 
 # ==================== 策略组 ====================
 proxy-groups:
