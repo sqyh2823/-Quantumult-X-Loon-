@@ -63,20 +63,20 @@ proxies:
   # --- 美西CN2-VLESS ---
   - name: "美西CN2-VLESS"
     type: vless
-    server: 38.55.108.187
-    port: 22222
-    uuid: 479caf6c-62ef-4f6c-a8bb-480e00b70e01
+    server: 154.82.20.163
+    port: 55300
+    uuid: 8c9ca8d3-7654-4d10-ae6c-8729451101e0
     network: tcp
     fast-open: false 
     udp: true
     tls: true
     flow: xtls-rprx-vision
-    servername: www.apple.com
+    servername: images-na.ssl-images-amazon.com
     client-fingerprint: chrome
     packet-encoding: xudp
     reality-opts:
-      public-key: _LrGdm7IfbBey-7w2m4jT-eWh2oIy3BP_44ma3kkERw
-      short-id: "88888888"
+      public-key: P6wc0zClFHgt_85dKatT7mV_H0OAl2P-1XKaN8egXE0
+      short-id: "d306fbb8b833dfec"
 
   # --- 台湾家宽1-CF (新加节点) ---
   - name: "台湾家宽1-CF"
@@ -143,8 +143,26 @@ proxy-groups:
       - "绿云SB-CF"
       - "RN美西-CF优选"
 
-  # 🎥 奈飞专门组：删掉嵌套的“🚀 自动选择”，直接放具体节点，并在面板上手动钉死在解锁最稳的节点上
+  # 🎥 奈飞专门组
   - name: "🎥 奈飞分流"
+    type: select
+    proxies:
+      - "台湾家宽1-CF"
+      - "美西CN2-VLESS"
+      - "绿云SB-CF"
+      - "RN美西-CF优选"
+
+  # 🏰 迪士尼专门组（修复：补齐原本缺失的策略组）
+  - name: "🏰 迪士尼分流"
+    type: select
+    proxies:
+      - "台湾家宽1-CF"
+      - "美西CN2-VLESS"
+      - "绿云SB-CF"
+      - "RN美西-CF优选"
+
+  # 🔴 YouTube专门组（修复：补齐原本缺失的策略组）
+  - name: "🔴 YouTube分流"
     type: select
     proxies:
       - "台湾家宽1-CF"
@@ -180,7 +198,7 @@ rules:
   - DOMAIN-SUFFIX,netflixdnstest9.com,🎥 奈飞分流
   - GEOSITE,netflix,🎥 奈飞分流
 
-  # 其他流媒体保持原样...
+  # 其他流媒体
   - GEOSITE,disney,🏰 迪士尼分流
   - GEOSITE,youtube,🔴 YouTube分流
 
@@ -190,5 +208,5 @@ rules:
   - DOMAIN-SUFFIX,anthropic.com,🚀 自动选择
   - GEOIP,CN,DIRECT
 
-  # 默认
+  # 默认（修复：去除了尾部的“检查语法错误”杂质文本）
   - MATCH,🚀 自动选择
