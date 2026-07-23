@@ -63,8 +63,8 @@ proxies:
   # --- 美西CN2-VLESS ---
   - name: "美西CN2-VLESS"
     type: vless
-    server: 154.82.20.163
-    port: 52300
+    server: 38.55.108.187
+    port: 55300
     uuid: 8c9ca8d3-7654-4d10-ae6c-8729451101e0
     network: tcp
     fast-open: false 
