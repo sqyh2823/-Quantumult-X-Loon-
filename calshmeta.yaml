@@ -61,7 +61,7 @@ dns:
 proxies:
 
   # --- 美西CN2-VLESS ---
-  - name: "美西CN2-VLESS"
+  - name: "香港-台湾vless"
     type: vless
     server: 87.83.108.27
     port: 52300
@@ -139,7 +139,7 @@ proxy-groups:
     type: select
     proxies:
       - "台湾家宽1-CF"
-      - "美西CN2-VLESS"
+      - "香港-台湾vless"
       - "绿云SB-CF"
       - "RN美西-CF优选"
 
@@ -148,7 +148,7 @@ proxy-groups:
     type: select
     proxies:
       - "台湾家宽1-CF"
-      - "美西CN2-VLESS"
+      - "香港-台湾vless"
       - "绿云SB-CF"
       - "RN美西-CF优选"
 
@@ -157,7 +157,7 @@ proxy-groups:
     type: select
     proxies:
       - "台湾家宽1-CF"
-      - "美西CN2-VLESS"
+      - "香港-台湾vless"
       - "绿云SB-CF"
       - "RN美西-CF优选"
 
@@ -166,7 +166,7 @@ proxy-groups:
     type: select
     proxies:
       - "台湾家宽1-CF"
-      - "美西CN2-VLESS"
+      - "香港-台湾vless"
       - "绿云SB-CF"
       - "RN美西-CF优选"
 
