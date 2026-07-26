@@ -1,3 +1,175 @@
+mixed-port: 7890
+allow-lan: true
+mode: rule
+log-level: info
+ipv6: false # Clash 层面关闭 IPv6 处理，配合路由器关闭 IPv6 效果达到完全体
+
+# ==================== DNS ====================
+dns:
+  enable: true
+  ipv6: false # 🔒 严格禁止 DNS 层面解析 AAAA (IPv6) 记录
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  listen: 0.0.0.0:1053 # 显式监听本地 DNS 端口
+  respect-rules: true
+
+  # 🚀 拦截传统 DNS 偷跑
+  dns-hijack:
+    - 'any:53'
+    - 'tcp://any:53'
+
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+
+  nameserver:
+    - https://doh.pub/dns-query
+    - https://dns.alicdn.com/dns-query
+
+  # 🛠️ 针对电视端报错的核心修复点：当 respect-rules 开启时，此项绝对不能为空
+  proxy-server-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+
+  # 🔒 仅保留大方向的中国大陆 IP/域名不走 Fake-IP
+  fake-ip-filter:
+    - "geoip:cn"
+    - "geosite:cn"
+
+  nameserver-policy:
+    '+.06231104.xyz':
+      - 223.5.5.5
+      - 119.29.29.29
+    '+.top':
+      - 223.5.5.5
+      - 119.29.29.29
+    '+.cn':
+      - 223.5.5.5
+      - 119.29.29.29
+
+  fallback:
+    - https://1.1.1.1/dns-query
+    - https://dns.google/dns-query
+
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    ipcidr:
+      - 240.0.0.0/4
+
+# ==================== 节点 ====================
+proxies:
+
+  # --- 美西CN2-VLESS ---
+  - name: "香港-台湾vless"
+    type: vless
+    server: 87.83.108.27
+    port: 52300
+    uuid: 8c9ca8d3-7654-4d10-ae6c-8729451101e0
+    network: tcp
+    fast-open: false 
+    udp: true
+    tls: true
+    flow: xtls-rprx-vision
+    servername: images-na.ssl-images-amazon.com
+    client-fingerprint: chrome
+    packet-encoding: xudp
+    reality-opts:
+      public-key: P6wc0zClFHgt_85dKatT7mV_H0OAl2P-1XKaN8egXE0
+      short-id: "d306fbb8b833dfec"
+
+  # --- 台湾家宽1-CF (新加节点) ---
+  - name: "台湾家宽1-CF"
+    type: vless
+    server: sqyh.06231104.xyz
+    port: 443
+    uuid: c40bb794-3370-4d98-9a6a-2b5cce13d2f9
+    udp: true
+    tls: true
+    network: ws
+    sni: tw.06231104.xyz
+    client-fingerprint: chrome
+    skip-cert-verify: true
+    packet-encoding: xudp
+    ws-opts:
+      path: /cf-clean
+      headers:
+        Host: tw.06231104.xyz
+
+  # --- 绿云SB-CF (VLESS + WS + TLS) ---
+  - name: "绿云SB-CF"
+    type: vless
+    server: sqyh.06231104.xyz
+    port: 443
+    uuid: c200c7e7-78a6-4e7f-ab0b-3ce41deff3be
+    udp: true
+    tls: true
+    tfo: true
+    servername: lyrcf.06231104.xyz
+    client-fingerprint: chrome
+    skip-cert-verify: true
+    network: ws
+    packet-encoding: xudp
+    ws-opts:
+      path: /raysb
+      headers:
+        Host: lyrcf.06231104.xyz
+
+  # --- RN 美西 优选 ---
+  - name: "RN美西-CF优选"
+    type: vless
+    server: sqyh.06231104.xyz
+    port: 443
+    uuid: 2f16a2f6-8a86-4e5a-827f-31e29d111d5d
+    udp: true
+    tls: true
+    servername: akile.06231104.xyz
+    client-fingerprint: chrome
+    skip-cert-verify: true
+    network: ws
+    ws-opts:
+      path: /ray-akile
+      headers:
+        Host: akile.06231104.xyz
+
+# ==================== 策略组 ====================
+proxy-groups:
+  # 保持你的手动选择组，用于日常网页
+  - name: "🚀 自动选择"
+    type: select
+    proxies:
+      - "台湾家宽1-CF"
+      - "香港-台湾vless"
+      - "绿云SB-CF"
+      - "RN美西-CF优选"
+
+  # 🎥 奈飞专门组
+  - name: "🎥 奈飞分流"
+    type: select
+    proxies:
+      - "台湾家宽1-CF"
+      - "香港-台湾vless"
+      - "绿云SB-CF"
+      - "RN美西-CF优选"
+
+  # 🏰 迪士尼专门组（默认推荐直连节点“香港-台湾vless”）
+  - name: "🏰 迪士尼分流"
+    type: select
+    proxies:
+      - "香港-台湾vless"
+      - "台湾家宽1-CF"
+      - "绿云SB-CF"
+      - "RN美西-CF优选"
+
+  # 🔴 YouTube专门组
+  - name: "🔴 YouTube分流"
+    type: select
+    proxies:
+      - "台湾家宽1-CF"
+      - "香港-台湾vless"
+      - "绿云SB-CF"
+      - "RN美西-CF优选"
+
 # ==================== 规则 ====================
 rules:
   # 🚫 斩断已知 DoH 逃生管道
@@ -6,7 +178,7 @@ rules:
   - DOMAIN-SUFFIX,dns.quad9.net,REJECT
   - DOMAIN-SUFFIX,adguard-dns.com,REJECT
 
-  # 🚫 核心优化：封锁 QUIC (UDP 443)，强迫电视端 Disney+/YouTube 走稳定的 TCP 协议
+  # 🚫 封锁 QUIC (UDP 443)，强迫电视端 Disney+/YouTube 走稳定的 TCP 协议
   - AND,((DST-PORT,443),(NETWORK,UDP)),REJECT
 
   # 🎥 Netflix 域名强锁
@@ -52,5 +224,5 @@ rules:
   - DOMAIN-SUFFIX,anthropic.com,🚀 自动选择
   - GEOIP,CN,DIRECT
 
-  # 默认兜底（修正原配置末尾的杂质文本）
+  # 默认兜底
   - MATCH,🚀 自动选择
