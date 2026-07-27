@@ -222,6 +222,7 @@ rules:
   - DOMAIN-SUFFIX,openai.com,🚀 自动选择
   - DOMAIN-SUFFIX,chatgpt.com,🚀 自动选择
   - DOMAIN-SUFFIX,anthropic.com,🚀 自动选择
+  - DOMAIN-SUFFIX,micu.hk,🚀 自动选择
   - GEOIP,CN,DIRECT
 
   # 默认兜底
