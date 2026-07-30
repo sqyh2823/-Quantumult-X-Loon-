@@ -201,7 +201,7 @@ rules:
   - DOMAIN-SUFFIX,netflixdnstest9.com,🎥 奈飞分流
   - GEOSITE,netflix,🎥 奈飞分流
 
-  # 🏰 Disney+ 补全（显式锁死迪士尼 CDN 与鉴权域名）
+    # 🏰 Disney+ 补全（补充 CDN 切片域名）
   - DOMAIN-KEYWORD,disney,🏰 迪士尼分流
   - DOMAIN-KEYWORD,bamgrid,🏰 迪士尼分流
   - DOMAIN-SUFFIX,disney.com,🏰 迪士尼分流
@@ -212,7 +212,12 @@ rules:
   - DOMAIN-SUFFIX,bamtechmedia.com,🏰 迪士尼分流
   - DOMAIN-SUFFIX,dssott.com,🏰 迪士尼分流
   - DOMAIN-SUFFIX,starott.com,🏰 迪士尼分流
+  # ⬇️ 新增以下三行关键 CDN 匹配规则
+  - DOMAIN-SUFFIX,media.dssott.com,🏰 迪士尼分流
+  - DOMAIN-SUFFIX,edge.bamgrid.com,🏰 迪士尼分流
+  - DOMAIN-SUFFIX,cdn.registerdisney.go.com,🏰 迪士尼分流
   - GEOSITE,disney,🏰 迪士尼分流
+
 
   # 🔴 YouTube 分流
   - DOMAIN-KEYWORD,youtube,🔴 YouTube分流
