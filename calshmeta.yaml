@@ -60,8 +60,42 @@ dns:
 # ==================== 节点 ====================
 proxies:
 
-  # --- 美西CN2-VLESS ---
+  # --- 香港HY2 (前置抗丢包跳板) ---
+  - name: "香港hy2"
+    type: hysteria2
+    server: 156.239.10.155
+    port: 42151
+    ports: "20000-30000"
+    password: "cGkMrNMjRZ"
+    up: "50M"
+    down: "115M"
+    sni: dl.google.com
+    skip-cert-verify: true
+    alpn:
+      - h3
+    obfs: salamander
+    obfs-password: "qr0801"
+    fast-open: true
+
+  # --- 香港-台湾VLESS (通过 PCCW 中转 + HY2 链式代理) ---
   - name: "香港-台湾vless"
+    type: vless
+    server: 172.81.111.251
+    port: 25300
+    uuid: 8c9ca8d3-7654-4d10-ae6c-8729451101e0
+    udp: true
+    tls: true
+    flow: xtls-rprx-vision
+    servername: images-na.ssl-images-amazon.com
+    client-fingerprint: chrome
+    packet-encoding: xudp
+    dialer-proxy: "香港hy2"
+    reality-opts:
+      public-key: P6wc0zClFHgt_85dKatT7mV_H0OAl2P-1XKaN8egXE0
+      short-id: "d306fbb8b833dfec"
+
+  # --- 旧直连备用：香港realm-台湾VLESS ---
+  - name: "香港realm-台湾vless"
     type: vless
     server: 87.83.108.27
     port: 52300
@@ -78,48 +112,11 @@ proxies:
       public-key: P6wc0zClFHgt_85dKatT7mV_H0OAl2P-1XKaN8egXE0
       short-id: "d306fbb8b833dfec"
 
-  # --- 台湾家宽1-CF (新加节点) ---
-  - name: "台湾家宽1-CF"
-    type: vless
-    server: sqyh.06231104.xyz
-    port: 443
-    uuid: c40bb794-3370-4d98-9a6a-2b5cce13d2f9
-    udp: true
-    tls: true
-    network: ws
-    sni: tw.06231104.xyz
-    client-fingerprint: chrome
-    skip-cert-verify: true
-    packet-encoding: xudp
-    ws-opts:
-      path: /cf-clean
-      headers:
-        Host: tw.06231104.xyz
-
-  # --- 绿云SB-CF (VLESS + WS + TLS) ---
-  - name: "绿云SB-CF"
-    type: vless
-    server: sqyh.06231104.xyz
-    port: 443
-    uuid: c200c7e7-78a6-4e7f-ab0b-3ce41deff3be
-    udp: true
-    tls: true
-    tfo: true
-    servername: lyrcf.06231104.xyz
-    client-fingerprint: chrome
-    skip-cert-verify: true
-    network: ws
-    packet-encoding: xudp
-    ws-opts:
-      path: /raysb
-      headers:
-        Host: lyrcf.06231104.xyz
-
   # --- RN 美西 优选 ---
   - name: "RN美西-CF优选"
     type: vless
     server: sqyh.06231104.xyz
-    port: 443
+    port: 8443
     uuid: 2f16a2f6-8a86-4e5a-827f-31e29d111d5d
     udp: true
     tls: true
@@ -134,40 +131,40 @@ proxies:
 
 # ==================== 策略组 ====================
 proxy-groups:
-  # 保持你的手动选择组，用于日常网页
+  # 🚀 自动选择组
   - name: "🚀 自动选择"
     type: select
     proxies:
-      - "台湾家宽1-CF"
       - "香港-台湾vless"
-      - "绿云SB-CF"
+      - "香港hy2"
+      - "香港realm-台湾vless"
       - "RN美西-CF优选"
 
   # 🎥 奈飞专门组
   - name: "🎥 奈飞分流"
     type: select
     proxies:
-      - "台湾家宽1-CF"
       - "香港-台湾vless"
-      - "绿云SB-CF"
+      - "香港realm-台湾vless"
+      - "香港hy2"
       - "RN美西-CF优选"
 
-  # 🏰 迪士尼专门组（默认推荐直连节点“香港-台湾vless”）
+  # 🏰 迪士尼专门组
   - name: "🏰 迪士尼分流"
     type: select
     proxies:
       - "香港-台湾vless"
-      - "台湾家宽1-CF"
-      - "绿云SB-CF"
+      - "香港realm-台湾vless"
+      - "香港hy2"
       - "RN美西-CF优选"
 
   # 🔴 YouTube专门组
   - name: "🔴 YouTube分流"
     type: select
     proxies:
-      - "台湾家宽1-CF"
       - "香港-台湾vless"
-      - "绿云SB-CF"
+      - "香港hy2"
+      - "香港realm-台湾vless"
       - "RN美西-CF优选"
 
 # ==================== 规则 ====================
@@ -201,7 +198,7 @@ rules:
   - DOMAIN-SUFFIX,netflixdnstest9.com,🎥 奈飞分流
   - GEOSITE,netflix,🎥 奈飞分流
 
-    # 🏰 Disney+ 补全（补充 CDN 切片域名）
+  # 🏰 Disney+ 补全
   - DOMAIN-KEYWORD,disney,🏰 迪士尼分流
   - DOMAIN-KEYWORD,bamgrid,🏰 迪士尼分流
   - DOMAIN-SUFFIX,disney.com,🏰 迪士尼分流
@@ -212,16 +209,15 @@ rules:
   - DOMAIN-SUFFIX,bamtechmedia.com,🏰 迪士尼分流
   - DOMAIN-SUFFIX,dssott.com,🏰 迪士尼分流
   - DOMAIN-SUFFIX,starott.com,🏰 迪士尼分流
-  # ⬇️ 新增以下三行关键 CDN 匹配规则
   - DOMAIN-SUFFIX,media.dssott.com,🏰 迪士尼分流
   - DOMAIN-SUFFIX,edge.bamgrid.com,🏰 迪士尼分流
   - DOMAIN-SUFFIX,cdn.registerdisney.go.com,🏰 迪士尼分流
   - GEOSITE,disney,🏰 迪士尼分流
 
-
   # 🔴 YouTube 分流
   - DOMAIN-KEYWORD,youtube,🔴 YouTube分流
   - GEOSITE,youtube,🔴 YouTube分流
+  - DOMAIN-SUFFIX,micu.hk,🔴 YouTube分流
 
   # AI 与国内直连
   - DOMAIN-SUFFIX,openai.com,🚀 自动选择
