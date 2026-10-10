@@ -61,7 +61,7 @@ dns:
 proxies:
   - name: "美西vless"
     type: vless
-    server: 38.55.108.187
+    server: 207.57.140.20
     port: 11101
     uuid: 1d9ee484-93e3-4dfd-80b1-c144db3fea91
     network: tcp
@@ -104,7 +104,7 @@ proxies:
 
   - name: "美国-台湾vless"
     type: vless
-    server: 38.55.108.187
+    server: 207.57.140.20
     port: 52300
     uuid: 8c9ca8d3-7654-4d10-ae6c-8729451101e0
     tls: true
