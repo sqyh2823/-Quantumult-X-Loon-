@@ -88,7 +88,7 @@ proxies:
       public-key: P6wc0zClFHgt_85dKatT7mV_H0OAl2P-1XKaN8egXE0
       short-id: d306fbb8b833dfec
 
-  - name: "香港-台湾vless"
+  - name: "阿里云香港-台湾vless"
     type: vless
     server: 8.210.188.161
     port: 52300
@@ -116,21 +116,19 @@ proxies:
       public-key: P6wc0zClFHgt_85dKatT7mV_H0OAl2P-1XKaN8egXE0
       short-id: d306fbb8b833dfec
 
-  - name: "日本cf"
+  - name: "懒猫云香港-台湾vless"
     type: vless
-    server: sqyh.06231104.xyz
-    port: 443
-    uuid: c200c7e7-78a6-4e7f-ab0b-3ce41deff3be
-    udp: true
+    server: 216.236.63.135
+    port: 52300
+    uuid: 8c9ca8d3-7654-4d10-ae6c-8729451101e0
     tls: true
-    tfo: true
-    network: ws
-    servername: lyrcf.06231104.xyz
+    flow: xtls-rprx-vision
+    servername: images-na.ssl-images-amazon.com
     client-fingerprint: chrome
-    ws-opts:
-      path: "/raysb"
-      headers:
-        Host: lyrcf.06231104.xyz
+    udp: true
+    reality-opts:
+      public-key: P6wc0zClFHgt_85dKatT7mV_H0OAl2P-1XKaN8egXE0
+      short-id: d306fbb8b833dfec
 
   - name: "香港hy2"
     type: hysteria2
@@ -153,45 +151,45 @@ proxy-groups:
   - name: "🚀 自动选择"
     type: select
     proxies:
-      - "香港-台湾vless"
+      - "阿里云香港-台湾vless"
       - "美国-台湾vless"
       - "香港hy2"
       - "香港vless"
       - "美西vless"
-      - "日本cf"
+      - "懒猫云香港-台湾vless"
 
   # 🎥 奈飞专门组
   - name: "🎥 奈飞分流"
     type: select
     proxies:
-      - "香港-台湾vless"
+      - "阿里云香港-台湾vless"
       - "美国-台湾vless"
       - "香港hy2"
       - "香港vless"
       - "美西vless"
-      - "日本cf"
+      - "懒猫云香港-台湾vless"
 
   # 🏰 迪士尼专门组
   - name: "🏰 迪士尼分流"
     type: select
     proxies:
-      - "香港-台湾vless"
+      - "阿里云香港-台湾vless"
       - "美国-台湾vless"
       - "香港hy2"
       - "香港vless"
       - "美西vless"
-      - "日本cf"
+      - "懒猫云香港-台湾vless"
 
   # 🔴 YouTube专门组
   - name: "🔴 YouTube分流"
     type: select
     proxies:
-      - "香港-台湾vless"
+      - "阿里云香港-台湾vless"
       - "美国-台湾vless"
       - "香港hy2"
       - "香港vless"
       - "美西vless"
-      - "日本cf"
+      - "懒猫云香港-台湾vless"
 
 # ==================== 规则 ====================
 rules:
