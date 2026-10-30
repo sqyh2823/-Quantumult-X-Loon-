@@ -76,8 +76,8 @@ proxies:
 
   - name: "香港vless"
     type: vless
-    server: 156.239.10.155
-    port: 20210
+    server: 216.236.63.135
+    port: 55300
     uuid: 8c9ca8d3-7654-4d10-ae6c-8729451101e0
     tls: true
     flow: xtls-rprx-vision
