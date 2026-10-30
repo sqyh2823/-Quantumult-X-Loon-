@@ -90,8 +90,8 @@ proxies:
 
   - name: "阿里云香港-台湾vless"
     type: vless
-    server: 8.210.188.161
-    port: 52300
+    server: 47.243.208.165
+    port: 51300
     uuid: 8c9ca8d3-7654-4d10-ae6c-8729451101e0
     tls: true
     flow: xtls-rprx-vision
