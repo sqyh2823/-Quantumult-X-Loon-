@@ -119,7 +119,7 @@ proxies:
   - name: "懒猫云香港-台湾vless"
     type: vless
     server: 216.236.63.135
-    port: 55510
+    port: 25300
     uuid: 8c9ca8d3-7654-4d10-ae6c-8729451101e0
     tls: true
     flow: xtls-rprx-vision
