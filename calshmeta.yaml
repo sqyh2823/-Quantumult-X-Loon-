@@ -61,7 +61,7 @@ dns:
 proxies:
   - name: "美西vless"
     type: vless
-    server: 207.57.140.20
+    server: 38.55.108.227
     port: 11101
     uuid: 1d9ee484-93e3-4dfd-80b1-c144db3fea91
     network: tcp
@@ -74,49 +74,7 @@ proxies:
       public-key: jDyTvCdLU4I4wAoJgjCK5ynpaFmztjBs4WppjlAweX0
       short-id: "88888888"
 
-  - name: "香港vless"
-    type: vless
-    server: 216.236.60.56
-    port: 55300
-    uuid: 8c9ca8d3-7654-4d10-ae6c-8729451101e0
-    tls: true
-    flow: xtls-rprx-vision
-    servername: images-na.ssl-images-amazon.com
-    client-fingerprint: chrome
-    udp: true
-    reality-opts:
-      public-key: P6wc0zClFHgt_85dKatT7mV_H0OAl2P-1XKaN8egXE0
-      short-id: d306fbb8b833dfec
-
-  - name: "阿里云香港-台湾vless"
-    type: vless
-    server: 47.243.208.165
-    port: 51300
-    uuid: 8c9ca8d3-7654-4d10-ae6c-8729451101e0
-    tls: true
-    flow: xtls-rprx-vision
-    servername: images-na.ssl-images-amazon.com
-    client-fingerprint: chrome
-    udp: true
-    reality-opts:
-      public-key: P6wc0zClFHgt_85dKatT7mV_H0OAl2P-1XKaN8egXE0
-      short-id: d306fbb8b833dfec
-
-  - name: "美国-台湾vless"
-    type: vless
-    server: 207.57.140.20
-    port: 52300
-    uuid: 8c9ca8d3-7654-4d10-ae6c-8729451101e0
-    tls: true
-    flow: xtls-rprx-vision
-    servername: images-na.ssl-images-amazon.com
-    client-fingerprint: chrome
-    udp: true
-    reality-opts:
-      public-key: P6wc0zClFHgt_85dKatT7mV_H0OAl2P-1XKaN8egXE0
-      short-id: d306fbb8b833dfec
-
-  - name: "懒猫云香港-台湾vless"
+   - name: "台湾vless"
     type: vless
     server: 216.236.60.56
     port: 52300
@@ -130,66 +88,35 @@ proxies:
       public-key: P6wc0zClFHgt_85dKatT7mV_H0OAl2P-1XKaN8egXE0
       short-id: d306fbb8b833dfec
 
-  - name: "香港hy2"
-    type: hysteria2
-    server: 156.239.10.155
-    port: 35443
-    ports: 40000-40100
-    password: Osx2RXj2rO
-    obfs: salamander
-    obfs-password: qr0801
-    sni: www.bing.com
-    skip-cert-verify: true
-    up: "60 Mbps"
-    down: "250 Mbps"
-    alpn:
-      - h3
-
-# ==================== 策略组 ====================
+  # ==================== 策略组 ====================
 proxy-groups:
   # 🚀 自动选择组
   - name: "🚀 自动选择"
     type: select
     proxies:
-      - "阿里云香港-台湾vless"
-      - "美国-台湾vless"
-      - "香港hy2"
-      - "香港vless"
+      - "台湾vless"
       - "美西vless"
-      - "懒猫云香港-台湾vless"
-
+ 
   # 🎥 奈飞专门组
   - name: "🎥 奈飞分流"
     type: select
     proxies:
-      - "阿里云香港-台湾vless"
-      - "美国-台湾vless"
-      - "香港hy2"
-      - "香港vless"
+      - "台湾vless"
       - "美西vless"
-      - "懒猫云香港-台湾vless"
 
   # 🏰 迪士尼专门组
   - name: "🏰 迪士尼分流"
     type: select
     proxies:
-      - "阿里云香港-台湾vless"
-      - "美国-台湾vless"
-      - "香港hy2"
-      - "香港vless"
+      - "台湾vless"
       - "美西vless"
-      - "懒猫云香港-台湾vless"
 
   # 🔴 YouTube专门组
   - name: "🔴 YouTube分流"
     type: select
     proxies:
-      - "阿里云香港-台湾vless"
-      - "美国-台湾vless"
-      - "香港hy2"
-      - "香港vless"
+      - "台湾vless"
       - "美西vless"
-      - "懒猫云香港-台湾vless"
 
 # ==================== 规则 ====================
 rules:
