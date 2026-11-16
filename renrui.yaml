@@ -1,0 +1,185 @@
+# Huawei / HarmonyOS 4.x - Clash Meta (mihomo) 完整配置
+# 默认：国内直连，国外代理；微信/抖音强制直连；华为系统服务优先直连。
+# 注意：此文件包含你的节点凭据，不建议上传至公开 GitHub 仓库。
+
+mixed-port: 7890
+allow-lan: false
+mode: rule
+log-level: warning
+ipv6: false
+unified-delay: true
+tcp-concurrent: true
+# Android/HarmonyOS：按应用包名识别微信/抖音连接，配合下方域名规则双重兜底。
+find-process-mode: strict
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+# GEO 数据库首次导入时需要下载；后续自动更新。
+geodata-mode: true
+geodata-loader: memconservative
+geo-auto-update: true
+geo-update-interval: 72
+geox-url:
+  geosite: https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat
+  geoip: https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.dat
+
+# Android / HarmonyOS 客户端的 VPN 模式由应用自身管理，不强制写入 TUN。
+dns:
+  enable: true
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  proxy-server-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  # 未被国内规则命中的域名，用海外 DNS 且通过代理查询。
+  nameserver:
+    - 'https://1.1.1.1/dns-query#代理选择'
+    - 'https://8.8.8.8/dns-query#代理选择'
+  # 国内域名和设备局域网域名，由国内 DNS 解析。
+  nameserver-policy:
+    # 微信和抖音的域名优先使用国内 DNS，避免海外解析。
+    'geosite:douyin':
+      - https://223.5.5.5/dns-query
+      - https://doh.pub/dns-query
+    '+.wechat.com':
+      - https://223.5.5.5/dns-query
+      - https://doh.pub/dns-query
+    '+.wechatpay.com':
+      - https://223.5.5.5/dns-query
+      - https://doh.pub/dns-query
+    '+.wechatpay.cn':
+      - https://223.5.5.5/dns-query
+      - https://doh.pub/dns-query
+    '+.weixin.com':
+      - https://223.5.5.5/dns-query
+      - https://doh.pub/dns-query
+    '+.weixin.qq.com':
+      - https://223.5.5.5/dns-query
+      - https://doh.pub/dns-query
+    '+.weixinbridge.com':
+      - https://223.5.5.5/dns-query
+      - https://doh.pub/dns-query
+    '+.wx.qq.com':
+      - https://223.5.5.5/dns-query
+      - https://doh.pub/dns-query
+    '+.wx2.qq.com':
+      - https://223.5.5.5/dns-query
+      - https://doh.pub/dns-query
+    '+.tenpay.com':
+      - https://223.5.5.5/dns-query
+      - https://doh.pub/dns-query
+    'geosite:cn,private':
+      - https://223.5.5.5/dns-query
+      - https://doh.pub/dns-query
+    '+.hicloud.com':
+      - https://223.5.5.5/dns-query
+    '+.huawei.com':
+      - https://223.5.5.5/dns-query
+  direct-nameserver:
+    - https://223.5.5.5/dns-query
+  fake-ip-filter:
+    - '*.lan'
+    - '*.local'
+    - '*.home.arpa'
+    - 'geosite:private'
+    - 'geosite:cn'
+    # 微信/抖音走真实 IP，降低小程序、音视频和支付场景的兼容性风险。
+    - 'geosite:douyin'
+    - '+.wechat.com'
+    - '+.wechatpay.com'
+    - '+.wechatpay.cn'
+    - '+.weixin.com'
+    - '+.weixin.qq.com'
+    - '+.weixinbridge.com'
+    - '+.wx.qq.com'
+    - '+.wx2.qq.com'
+    - '+.tenpay.com'
+    - '+.hicloud.com'
+    - '+.huawei.com'
+    - '+.msftconnecttest.com'
+    - '+.msftncsi.com'
+
+proxies:
+  - name: '任瑞'
+    type: vless
+    server: 68.164.13.10
+    port: 25300
+    uuid: 8c9ca8d3-7654-4d10-ae6c-8729451101e0
+    network: tcp
+    tls: true
+    flow: xtls-rprx-vision
+    servername: images-na.ssl-images-amazon.com
+    client-fingerprint: chrome
+    udp: true
+    reality-opts:
+      public-key: P6wc0zClFHgt_85dKatT7mV_H0OAl2P-1XKaN8egXE0
+      short-id: d306fbb8b833dfec
+
+proxy-groups:
+  - name: '代理选择'
+    type: select
+    proxies:
+      - '任瑞'
+      - DIRECT
+
+# 自上而下匹配，前面的规则优先。
+rules:
+  # 【最高优先级】按 Android 包名直连：连第三方 CDN / 未收录域名也尽量覆盖。
+  # 如华为 Clash Meta 客户端不提供应用识别，继续依赖下面的域名兜底。
+  - PROCESS-NAME,com.tencent.mm,DIRECT
+  - PROCESS-NAME,com.ss.android.ugc.aweme,DIRECT
+  - PROCESS-NAME,com.ss.android.ugc.aweme.lite,DIRECT
+
+  # 微信：消息、音视频、朋友圈、公众号、小程序、微信支付常见域名。
+  - DOMAIN-SUFFIX,wechat.com,DIRECT
+  - DOMAIN-SUFFIX,wechatpay.com,DIRECT
+  - DOMAIN-SUFFIX,wechatpay.cn,DIRECT
+  - DOMAIN-SUFFIX,weixin.com,DIRECT
+  - DOMAIN-SUFFIX,weixin.qq.com,DIRECT
+  - DOMAIN-SUFFIX,weixinbridge.com,DIRECT
+  - DOMAIN-SUFFIX,wx.qq.com,DIRECT
+  - DOMAIN-SUFFIX,wx2.qq.com,DIRECT
+  - DOMAIN-SUFFIX,tenpay.com,DIRECT
+
+  # 抖音：GeoSite 专项规则覆盖视频 CDN / 直播 / 电商等关联域名。
+  - GEOSITE,douyin,DIRECT
+  - DOMAIN-SUFFIX,douyin.com,DIRECT
+  - DOMAIN-SUFFIX,douyincdn.com,DIRECT
+  - DOMAIN-SUFFIX,douyinpic.com,DIRECT
+  - DOMAIN-SUFFIX,douyinstatic.com,DIRECT
+  - DOMAIN-SUFFIX,douyinvod.com,DIRECT
+  - DOMAIN-SUFFIX,douyinec.com,DIRECT
+  - DOMAIN-SUFFIX,douyinpay.com,DIRECT
+  - DOMAIN-SUFFIX,amemv.com,DIRECT
+  - DOMAIN-SUFFIX,iesdouyin.com,DIRECT
+  - DOMAIN-SUFFIX,byteimg.com,DIRECT
+  - DOMAIN-SUFFIX,bytedance.com,DIRECT
+
+  # 华为手机系统、华为云相关服务直连，避免账号/推送/应用市场异常。
+  - DOMAIN-SUFFIX,huawei.com,DIRECT
+  - DOMAIN-SUFFIX,hicloud.com,DIRECT
+  - DOMAIN-SUFFIX,huaweicloud.com,DIRECT
+  - DOMAIN-SUFFIX,dbankcloud.com,DIRECT
+
+  # 局域网/私有网络直连。
+  - DOMAIN-SUFFIX,lan,DIRECT
+  - DOMAIN-SUFFIX,local,DIRECT
+  - DOMAIN-SUFFIX,home.arpa,DIRECT
+  - GEOSITE,private,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,169.254.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+
+  # 国内域名和国内 IP 直连，未命中的其余连接走代理。
+  - GEOSITE,cn,DIRECT
+  - GEOIP,CN,DIRECT,no-resolve
+  - MATCH,代理选择
