@@ -58,7 +58,7 @@ proxies:
   - name: '美国vless'
     type: vless
     server: 38.55.108.227
-    port: 11101
+    port: 25200
     uuid: 1d9ee484-93e3-4dfd-80b1-c144db3fea91
     network: tcp
     udp: true
